@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anasteisha - Косметолог Анастасия Крылова | г. Анжеро-Судженск</title>
+    <meta name="description" content="Кабинет косметологии Anasteisha. Профессиональный уход за кожей лица и тела. Система FlaxTap. Безинъекционное омоложение.">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ========== MAINTENANCE MODE ========== -->
+    <!-- Чтобы включить режим тех. работ: измените display: none на display: flex -->
+    <div class="maintenance-mode" id="maintenanceMode" style="display: none;">
+        <div class="maintenance-content">
+            <div class="maintenance-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h1>Ведутся технические работы</h1>
+            <p>Сайт временно недоступен. Мы обновляем его, чтобы сделать еще лучше для вас.</p>
+            <div class="maintenance-info">
+                <div class="maintenance-time">
+                    <i class="far fa-clock"></i>
+                    <span>Ожидаемое время завершения: скоро</span>
+                </div>
+            </div>
+            <div class="maintenance-contact">
+                <p>Для записи свяжитесь с нами:</p>
+                <a href="tel:+79000000000" class="maintenance-phone">
+                    <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                </a>
+                <a href="https://t.me/anasteisha" class="maintenance-telegram">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+            </div>
+            <div class="maintenance-logo">Anasteisha</div>
+        </div>
+        <div class="maintenance-decoration">
+            <div class="decoration-circle"></div>
+            <div class="decoration-circle"></div>
+            <div class="decoration-circle"></div>
+        </div>
+    </div>
+
+    <!-- ========== PRELOADER ========== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">Anasteisha</div>
+            <div class="preloader-spinner"></div>
+        </div>
+    </div>
+
+    <!-- ========== HEADER ========== -->
+    <header class="header" id="header">
+        <div class="header-top">
+            <div class="container">
+                <p><i class="fas fa-map-marker-alt"></i> г. Анжеро-Судженск, ул. М.Горького 11А</p>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo">Anasteisha</a>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Меню">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <nav class="nav" id="mainNav">
+                        <ul>
+                            <li><a href="#services">Услуги</a></li>
+                            <li><a href="#about">Обо мне</a></li>
+                            <li><a href="#gallery">Результаты</a></li>
+                            <li><a href="#booking">Запись</a></li>
+                            <li><a href="#contacts">Контакты</a></li>
+                        </ul>
+                    </nav>
+                    <a href="#booking" class="btn btn-primary header-btn">
+                        <i class="fas fa-calendar-alt"></i> Записаться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero">
+        <div class="hero-bg-animation"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge" data-aos="fade-down" data-aos-delay="100">
+                    <i class="fas fa-star"></i> Профессиональная косметология
+                </div>
+
+                <h1 data-aos="fade-up" data-aos-delay="200">
+                    <span class="hero-title-line">Anasteisha</span>
+                </h1>
+
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+                    Кабинет косметологии
+                </p>
+
+                <div class="hero-divider" data-aos="zoom-in" data-aos-delay="400">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-spa"></i>
+                    <span class="divider-line"></span>
+                </div>
+
+                <p class="hero-description" data-aos="fade-up" data-aos-delay="500">
+                    Молодость и красота без инъекций и сложных процедур
+                </p>
+
+                <p class="hero-specialist" data-aos="fade-up" data-aos-delay="600">
+                    <i class="fas fa-user-md"></i> Косметолог: <strong>Анастасия Крылова</strong>
+                </p>
+
+                <div class="hero-features" data-aos="fade-up" data-aos-delay="700">
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="hero-feature-text">
+                            <h3>Безопасно</h3>
+                            <p>Без инъекций</p>
+                        </div>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="hero-feature-text">
+                            <h3>Эффективно</h3>
+                            <p>Видимый результат</p>
+                        </div>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div class="hero-feature-text">
+                            <h3>Премиально</h3>
+                            <p>Система FlaxTap</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-buttons" data-aos="fade-up" data-aos-delay="800">
+                    <a href="#booking" class="btn btn-primary btn-lg">
+                        <i class="fas fa-calendar-check"></i> Записаться на консультацию
+                    </a>
+                    <a href="#services" class="btn btn-outline btn-lg">
+                        <i class="fas fa-list"></i> Смотреть услуги
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-scroll-indicator">
+            <span>Листайте вниз</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- ========== SERVICES SECTION ========== -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Наши услуги</span>
+                <h2 class="section-title">Косметологические процедуры</h2>
+                <p class="section-subtitle">Полный спектр профессионального ухода на основе системы FlaxTap</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-spa"></i>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+
+            <!-- ЛИЦО -->
+            <div class="services-category" data-aos="fade-up">
+                <h3 class="category-title">
+                    <i class="fas fa-face-smile"></i> Процедуры для лица
+                </h3>
+                <div class="services-grid">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-leaf"></i></div>
+                            <span class="service-tag">Популярное</span>
+                        </div>
+                        <h4>Атравматическая чистка лица</h4>
+                        <p class="service-system">FlaxPeelFace</p>
+                        <p class="service-desc">Глубокое очищение без травмирования кожи</p>
+                        <div class="service-footer">
+                            <div class="service-price">2 500 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 60 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-arrow-up"></i></div>
+                        </div>
+                        <h4>Лифтинг-омоложение лица</h4>
+                        <p class="service-system">FlaxLift</p>
+                        <p class="service-desc">Подтяжка и укрепление овала лица</p>
+                        <div class="service-footer">
+                            <div class="service-price">2 800 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 90 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                        </div>
+                        <h4>Липосомальное обновление кожи</h4>
+                        <p class="service-system">FlaxNewSkin</p>
+                        <p class="service-desc">Глубокое питание и регенерация клеток</p>
+                        <div class="service-footer">
+                            <div class="service-price">2 800 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 90 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-flask"></i></div>
+                        </div>
+                        <h4>Ферментотерапия лица</h4>
+                        <p class="service-system">FlaxEnzyme</p>
+                        <p class="service-desc">Активация естественных процессов обновления</p>
+                        <div class="service-footer">
+                            <div class="service-price">2 800 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 75 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-star"></i></div>
+                            <span class="service-tag premium">Премиум</span>
+                        </div>
+                        <h4>Безынъекционный ботокс</h4>
+                        <p class="service-system">FlaxSpicule</p>
+                        <p class="service-desc">Эффект ботокса без уколов</p>
+                        <div class="service-footer">
+                            <div class="service-price">2 800 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 90 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- КОМБИНИРОВАННЫЕ ЗОНЫ -->
+            <div class="services-category" data-aos="fade-up">
+                <h3 class="category-title">
+                    <i class="fas fa-spa"></i> Комплексные процедуры
+                </h3>
+                <div class="services-grid">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-leaf"></i></div>
+                        </div>
+                        <h4>Атравматическая чистка спины</h4>
+                        <p class="service-system">FlaxPeelFace</p>
+                        <p class="service-desc">Глубокое очищение проблемных зон спины</p>
+                        <div class="service-footer">
+                            <div class="service-price">4 500 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 90 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-arrow-up"></i></div>
+                        </div>
+                        <h4>Лифтинг шеи и декольте</h4>
+                        <p class="service-system">FlaxLift</p>
+                        <p class="service-desc">Омоложение зоны шеи и декольте</p>
+                        <div class="service-footer">
+                            <div class="service-price">3 500 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 75 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                        </div>
+                        <h4>Обновление лица и декольте</h4>
+                        <p class="service-system">FlaxNewSkin</p>
+                        <p class="service-desc">Комплексное омоложение двух зон</p>
+                        <div class="service-footer">
+                            <div class="service-price">3 500 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 120 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="service-card-header">
+                            <div class="service-icon"><i class="fas fa-star"></i></div>
+                            <span class="service-tag premium">Премиум</span>
+                        </div>
+                        <h4>Ботокс лица и шеи</h4>
+                        <p class="service-system">FlaxSpicule</p>
+                        <p class="service-desc">Максимальный эффект омоложения</p>
+                        <div class="service-footer">
+                            <div class="service-price">3 800 <span>₽</span></div>
+                            <div class="service-duration"><i class="far fa-clock"></i> 105 мин</div>
+                        </div>
+                        <a href="#booking" class="service-book-btn">Записаться</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- СПЕЦИАЛЬНОЕ ПРЕДЛОЖЕНИЕ -->
+            <div class="promo-banner" data-aos="zoom-in">
+                <div class="promo-content">
+                    <div class="promo-icon"><i class="fas fa-gift"></i></div>
+                    <div class="promo-text">
+                        <h3>Специальное предложение</h3>
+                        <p>При покупке курса процедур: <strong>3+1</strong>, <strong>5+1</strong>, <strong>10+1</strong></p>
+                        <span class="promo-highlight">Одна процедура в подарок!</span>
+                    </div>
+                    <a href="#booking" class="btn btn-white">Узнать подробнее</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ABOUT SECTION ========== -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-wrapper">
+                <div class="about-image" data-aos="fade-right">
+                    <div class="about-image-frame">
+                        <img src="/static/images/specialist.jpg" alt="Косметолог Анастасия Крылова" class="about-photo">
+                    </div>
+                    <div class="about-experience">
+                        <span class="exp-number">5+</span>
+                        <span class="exp-text">лет опыта</span>
+                    </div>
+                </div>
+
+                <div class="about-content" data-aos="fade-left">
+                    <span class="section-badge">О специалисте</span>
+                    <h2 class="about-title">Анастасия Крылова</h2>
+                    <p class="about-subtitle">Профессиональный косметолог</p>
+
+                    <div class="about-divider">
+                        <span class="divider-line"></span>
+                        <i class="fas fa-spa"></i>
+                        <span class="divider-line"></span>
+                    </div>
+
+                    <p class="about-text">
+                        Профессиональный косметолог с многолетним опытом работы в области современной эстетической дерматологии. Специализируюсь на безинъекционных методиках омоложения и улучшения качества кожи.
+                    </p>
+                    <p class="about-text">
+                        Использую исключительно профессиональные системы FlaxTap, которые признаны наиболее эффективными и безопасными для кожи любого типа.
+                    </p>
+
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <div class="about-feature-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <div class="about-feature-text">
+                                <h4>Профессиональная подготовка</h4>
+                                <p>Сертифицированный специалист с постоянным повышением квалификации</p>
+                            </div>
+                        </div>
+
+                        <div class="about-feature">
+                            <div class="about-feature-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="about-feature-text">
+                                <h4>Индивидуальный подход</h4>
+                                <p>Персональная программа ухода для каждого клиента</p>
+                            </div>
+                        </div>
+
+                        <div class="about-feature">
+                            <div class="about-feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="about-feature-text">
+                                <h4>Безопасность и качество</h4>
+                                <p>Только проверенные методики и сертифицированная косметика</p>
+                            </div>
+                        </div>
+
+                        <div class="about-feature">
+                            <div class="about-feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="about-feature-text">
+                                <h4>Результативность</h4>
+                                <p>Видимый результат уже после первых процедур курса</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#booking" class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i> Записаться на консультацию
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== GALLERY SECTION ========== -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Галерея</span>
+                <h2 class="section-title">Результаты работы</h2>
+                <p class="section-subtitle">Реальные результаты наших клиентов</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-camera"></i>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+
+            <div class="gallery-placeholder" data-aos="fade-up">
+                <div class="gallery-placeholder-content">
+                    <i class="fas fa-images"></i>
+                    <h3>Фотографии результатов</h3>
+                    <p>Здесь будут размещены фотографии до/после процедур</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== BOOKING SECTION ========== -->
+    <section class="booking" id="booking">
+        <div class="container">
+            <div class="booking-wrapper">
+                <div class="booking-info" data-aos="fade-right">
+                    <span class="section-badge light">Запись онлайн</span>
+                    <h2 class="booking-title">Записаться на консультацию</h2>
+                    <p class="booking-subtitle">Заполните форму и я свяжусь с вами в ближайшее время для подтверждения записи</p>
+
+                    <div class="booking-benefits">
+                        <div class="booking-benefit">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Бесплатная консультация</span>
+                        </div>
+                        <div class="booking-benefit">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Подбор индивидуального ухода</span>
+                        </div>
+                        <div class="booking-benefit">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Удобное время визита</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-contact">
+                        <h4>Или свяжитесь напрямую:</h4>
+                        <a href="tel:+79000000000" class="contact-link">
+                            <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                        </a>
+                        <a href="https://t.me/anasteisha" class="contact-link">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="booking-form-wrapper" data-aos="fade-left">
+                    <form class="booking-form" id="bookingForm">
+                        <div class="form-group">
+                            <label for="name"><i class="fas fa-user"></i> Имя и фамилия *</label>
+                            <input type="text" id="name" name="name" placeholder="Введите ваше имя" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone"><i class="fas fa-phone"></i> Телефон *</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+7 (999) 999-99-99" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="service"><i class="fas fa-list"></i> Интересующая услуга *</label>
+                            <select id="service" name="service" required>
+                                <option value="">-- Выберите услугу --</option>
+                                <optgroup label="Процедуры для лица">
+                                    <option value="Атравматическая чистка лица FlaxPeelFace">Атравматическая чистка лица - 2500₽</option>
+                                    <option value="Лифтинг-омоложение лица FlaxLift">Лифтинг-омоложение лица - 2800₽</option>
+                                    <option value="Липосомальное обновление кожи FlaxNewSkin">Липосомальное обновление кожи - 2800₽</option>
+                                    <option value="Ферментотерапия лица FlaxEnzyme">Ферментотерапия лица - 2800₽</option>
+                                    <option value="Безынъекционный ботокс лица FlaxSpicule">Безынъекционный ботокс лица - 2800₽</option>
+                                </optgroup>
+                                <optgroup label="Комплексные процедуры">
+                                    <option value="Атравматическая чистка спины FlaxPeelFace">Атравматическая чистка спины - 4500₽</option>
+                                    <option value="Лифтинг шеи и декольте FlaxLift">Лифтинг шеи и декольте - 3500₽</option>
+                                    <option value="Обновление лица и декольте FlaxNewSkin">Обновление лица и декольте - 3500₽</option>
+                                    <option value="Ботокс лица и шеи FlaxSpicule">Ботокс лица и шеи - 3800₽</option>
+                                </optgroup>
+                                <option value="Консультация">Консультация (бесплатно)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message"><i class="fas fa-comment"></i> Сообщение</label>
+                            <textarea id="message" name="message" placeholder="Расскажите о своих пожеланиях..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            <i class="fas fa-paper-plane"></i> Отправить заявку
+                        </button>
+
+                        <p class="form-privacy">
+                            <i class="fas fa-lock"></i> Нажимая кнопку, вы соглашаетесь на обработку персональных данных
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="contacts">
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">Anasteisha</a>
+                    <p class="footer-tagline">Кабинет профессиональной косметологии</p>
+                    <p class="footer-slogan">Молодость и красота без инъекций</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                        <a href="#" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Адрес</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> г. Анжеро-Судженск</p>
+                    <p>ул. М.Горького, 11А</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <a href="tel:+79000000000"><i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX</a>
+                    <a href="mailto:anasteisha@example.com"><i class="fas fa-envelope"></i> anasteisha@example.com</a>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Режим работы</h4>
+                    <p><i class="far fa-clock"></i> Пн-Пт: 10:00 - 20:00</p>
+                    <p>Сб-Вс: 10:00 - 18:00</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024-2026 Anasteisha. Все права защищены.</p>
+                <p class="developer-credit">
+                    Разработка сайта: <a href="https://github.com/Koshkoder" target="_blank">Сальская Ксения (@Koshkoder)</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCROLL TO TOP BUTTON ========== -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Наверх">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- ========== SUCCESS MODAL ========== -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+            <h3>Заявка отправлена!</h3>
+            <p>Спасибо за обращение. Я свяжусь с вами в ближайшее время для подтверждения записи.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Отлично!</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Main JavaScript -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
