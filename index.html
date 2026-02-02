@@ -91,6 +91,10 @@
                     <a href="#booking" class="btn btn-primary header-btn">
                         <i class="fas fa-calendar-alt"></i> Записаться
                     </a>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -457,89 +461,33 @@
     <!-- ========== BOOKING SECTION ========== -->
     <section class="booking" id="booking">
         <div class="container">
-            <div class="booking-wrapper">
-                <div class="booking-info" data-aos="fade-right">
-                    <span class="section-badge light">Запись онлайн</span>
-                    <h2 class="booking-title">Записаться на консультацию</h2>
-                    <p class="booking-subtitle">Заполните форму и я свяжусь с вами в ближайшее время для подтверждения записи</p>
-
-                    <div class="booking-benefits">
-                        <div class="booking-benefit">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Бесплатная консультация</span>
-                        </div>
-                        <div class="booking-benefit">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Подбор индивидуального ухода</span>
-                        </div>
-                        <div class="booking-benefit">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Удобное время визита</span>
-                        </div>
-                    </div>
-
-                    <div class="booking-contact">
-                        <h4>Или свяжитесь напрямую:</h4>
-                        <a href="tel:+79000000000" class="contact-link">
-                            <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
-                        </a>
-                        <a href="https://t.me/anasteisha" class="contact-link">
-                            <i class="fab fa-telegram"></i> Telegram
-                        </a>
-                    </div>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge light">Запись онлайн</span>
+                <h2 class="section-title light">Записаться на процедуру</h2>
+                <p class="section-subtitle light">Выберите удобное время и запишитесь онлайн</p>
+                <div class="section-divider light">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="divider-line"></span>
                 </div>
+            </div>
 
-                <div class="booking-form-wrapper" data-aos="fade-left">
-                    <form class="booking-form" id="bookingForm">
-                        <div class="form-group">
-                            <label for="name"><i class="fas fa-user"></i> Имя и фамилия *</label>
-                            <input type="text" id="name" name="name" placeholder="Введите ваше имя" required>
-                        </div>
+            <!-- Booking Widget Container -->
+            <div id="bookingWidget" class="booking-widget-container" data-aos="fade-up"></div>
 
-                        <div class="form-group">
-                            <label for="phone"><i class="fas fa-phone"></i> Телефон *</label>
-                            <input type="tel" id="phone" name="phone" placeholder="+7 (999) 999-99-99" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                            <input type="email" id="email" name="email" placeholder="your@email.com">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="service"><i class="fas fa-list"></i> Интересующая услуга *</label>
-                            <select id="service" name="service" required>
-                                <option value="">-- Выберите услугу --</option>
-                                <optgroup label="Процедуры для лица">
-                                    <option value="Атравматическая чистка лица FlaxPeelFace">Атравматическая чистка лица - 2500₽</option>
-                                    <option value="Лифтинг-омоложение лица FlaxLift">Лифтинг-омоложение лица - 2800₽</option>
-                                    <option value="Липосомальное обновление кожи FlaxNewSkin">Липосомальное обновление кожи - 2800₽</option>
-                                    <option value="Ферментотерапия лица FlaxEnzyme">Ферментотерапия лица - 2800₽</option>
-                                    <option value="Безынъекционный ботокс лица FlaxSpicule">Безынъекционный ботокс лица - 2800₽</option>
-                                </optgroup>
-                                <optgroup label="Комплексные процедуры">
-                                    <option value="Атравматическая чистка спины FlaxPeelFace">Атравматическая чистка спины - 4500₽</option>
-                                    <option value="Лифтинг шеи и декольте FlaxLift">Лифтинг шеи и декольте - 3500₽</option>
-                                    <option value="Обновление лица и декольте FlaxNewSkin">Обновление лица и декольте - 3500₽</option>
-                                    <option value="Ботокс лица и шеи FlaxSpicule">Ботокс лица и шеи - 3800₽</option>
-                                </optgroup>
-                                <option value="Консультация">Консультация (бесплатно)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message"><i class="fas fa-comment"></i> Сообщение</label>
-                            <textarea id="message" name="message" placeholder="Расскажите о своих пожеланиях..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-submit">
-                            <i class="fas fa-paper-plane"></i> Отправить заявку
-                        </button>
-
-                        <p class="form-privacy">
-                            <i class="fas fa-lock"></i> Нажимая кнопку, вы соглашаетесь на обработку персональных данных
-                        </p>
-                    </form>
+            <!-- Альтернативные способы связи -->
+            <div class="booking-alternatives" data-aos="fade-up">
+                <p>Или свяжитесь напрямую:</p>
+                <div class="booking-links">
+                    <a href="tel:+79000000000" class="booking-link">
+                        <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                    </a>
+                    <a href="https://t.me/anasteisha" class="booking-link">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </a>
+                    <a href="/my-bookings.html" class="booking-link">
+                        <i class="fas fa-list"></i> Мои записи
+                    </a>
                 </div>
             </div>
         </div>
@@ -579,6 +527,15 @@
                 </div>
             </div>
 
+            <div class="footer-actions">
+                <button class="btn btn-outline btn-sm" onclick="openReviewModal()">
+                    <i class="fas fa-star"></i> Оставить отзыв
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="openProblemModal()">
+                    <i class="fas fa-bug"></i> Сообщить о проблеме
+                </button>
+            </div>
+
             <div class="footer-bottom">
                 <p>&copy; 2024-2026 Anasteisha. Все права защищены.</p>
                 <p class="developer-credit">
@@ -603,10 +560,124 @@
         </div>
     </div>
 
+    <!-- ========== REVIEW MODAL ========== -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content modal-form">
+            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+            <h3><i class="fas fa-star"></i> Оставить отзыв</h3>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="reviewName">Ваше имя *</label>
+                    <input type="text" id="reviewName" name="name" required placeholder="Как вас зовут?">
+                </div>
+                <div class="form-group">
+                    <label for="reviewPhone">Телефон</label>
+                    <input type="tel" id="reviewPhone" name="phone" placeholder="+7 (999) 999-99-99">
+                </div>
+                <div class="form-group">
+                    <label>Оценка *</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-rating="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-rating="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-rating="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-rating="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-rating="5"><i class="far fa-star"></i></span>
+                    </div>
+                    <input type="hidden" id="reviewRating" name="rating" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="reviewService">Какую услугу получили?</label>
+                    <select id="reviewService" name="service">
+                        <option value="">-- Выберите услугу --</option>
+                        <option value="Атравматическая чистка лица">Атравматическая чистка лица</option>
+                        <option value="Лифтинг-омоложение лица">Лифтинг-омоложение лица</option>
+                        <option value="Липосомальное обновление кожи">Липосомальное обновление кожи</option>
+                        <option value="Ферментотерапия лица">Ферментотерапия лица</option>
+                        <option value="Безынъекционный ботокс">Безынъекционный ботокс</option>
+                        <option value="Другое">Другое</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reviewText">Ваш отзыв *</label>
+                    <textarea id="reviewText" name="text" required placeholder="Расскажите о вашем опыте..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-paper-plane"></i> Отправить отзыв
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== WELCOME MODAL (New Visitors) ========== -->
+    <div class="modal" id="welcomeModal">
+        <div class="modal-content welcome-modal">
+            <button class="modal-close welcome-close" onclick="closeWelcomeModal()">&times;</button>
+            <div class="welcome-badge">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h3>Добро пожаловать!</h3>
+            <p class="welcome-subtitle">Специальное предложение для новых клиентов</p>
+            <div class="welcome-discount">
+                <span class="discount-value">-15%</span>
+                <span class="discount-text">на первое посещение</span>
+            </div>
+            <p class="welcome-info">Запишитесь на консультацию и получите скидку на любую процедуру</p>
+            <div class="welcome-buttons">
+                <a href="#booking" class="btn btn-primary" onclick="closeWelcomeModal()">
+                    <i class="fas fa-calendar-check"></i> Записаться со скидкой
+                </a>
+                <button class="btn btn-outline" onclick="closeWelcomeModal()">
+                    Посмотреть услуги
+                </button>
+            </div>
+            <p class="welcome-note">
+                <i class="fas fa-clock"></i> Предложение действует 7 дней
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== PROBLEM MODAL ========== -->
+    <div class="modal" id="problemModal">
+        <div class="modal-content modal-form">
+            <button class="modal-close" onclick="closeProblemModal()">&times;</button>
+            <h3><i class="fas fa-bug"></i> Сообщить о проблеме</h3>
+            <form id="problemForm">
+                <div class="form-group">
+                    <label for="problemType">Тип обращения *</label>
+                    <select id="problemType" name="problem_type" required>
+                        <option value="">-- Выберите тип --</option>
+                        <option value="bug">Ошибка на сайте</option>
+                        <option value="suggestion">Предложение по улучшению</option>
+                        <option value="question">Вопрос</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="problemName">Ваше имя</label>
+                    <input type="text" id="problemName" name="name" placeholder="Как вас зовут?">
+                </div>
+                <div class="form-group">
+                    <label for="problemEmail">Email для ответа</label>
+                    <input type="email" id="problemEmail" name="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="problemDescription">Описание *</label>
+                    <textarea id="problemDescription" name="description" required placeholder="Опишите проблему или ваше предложение..."></textarea>
+                </div>
+                <input type="hidden" id="problemPageUrl" name="page_url">
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-paper-plane"></i> Отправить
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- JavaScript Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <!-- Main JavaScript -->
     <script src="/static/js/script.js"></script>
+    <!-- Booking Widget -->
+    <script src="/static/js/booking.js"></script>
 </body>
 </html>

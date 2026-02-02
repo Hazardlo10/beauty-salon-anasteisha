@@ -1,5 +1,5 @@
 """
-Подключение к базе данных PostgreSQL
+Подключение к базе данных (PostgreSQL или SQLite)
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,13 +9,22 @@ from .config import get_settings
 settings = get_settings()
 
 # Создание движка базы данных
-engine = create_engine(
-    settings.DATABASE_URL,
-    pool_pre_ping=True,  # Проверка соединения перед использованием
-    pool_size=10,  # Размер пула соединений
-    max_overflow=20,  # Максимальное количество дополнительных соединений
-    echo=settings.DEBUG  # Логирование SQL запросов в режиме отладки
-)
+if settings.DATABASE_URL.startswith("sqlite"):
+    # SQLite - для локальной разработки
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=settings.DEBUG
+    )
+else:
+    # PostgreSQL - для продакшена
+    engine = create_engine(
+        settings.DATABASE_URL,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20,
+        echo=settings.DEBUG
+    )
 
 # Создание фабрики сессий
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
