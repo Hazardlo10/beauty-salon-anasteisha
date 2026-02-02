@@ -19,10 +19,22 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    # Telegram (опционально для локальной разработки)
+    # Telegram для РАЗРАБОТЧИКА (проблемы с сайтом)
     TELEGRAM_BOT_TOKEN: Optional[str] = None
     TELEGRAM_ADMIN_CHAT_ID: Optional[str] = None
     TELEGRAM_DEV_CHAT_ID: Optional[str] = None
+
+    # Telegram для СПЕЦИАЛИСТА (записи и отзывы)
+    TELEGRAM_SALON_BOT_TOKEN: Optional[str] = None
+    TELEGRAM_SALON_CHAT_ID: Optional[str] = None
+
+    # Email (для уведомлений клиентам)
+    SMTP_HOST: Optional[str] = None  # smtp.gmail.com, smtp.yandex.ru
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None  # email@gmail.com
+    SMTP_PASSWORD: Optional[str] = None  # app password
+    SMTP_FROM_NAME: str = "Anasteisha"
+    SMTP_FROM_EMAIL: Optional[str] = None  # если отличается от SMTP_USER
 
     # SMS (опционально)
     SMS_API_KEY: Optional[str] = None

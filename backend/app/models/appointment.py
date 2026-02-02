@@ -1,7 +1,7 @@
 """
 Модель записи на прием
 """
-from sqlalchemy import Column, Integer, ForeignKey, Date, Time, String, Numeric, Text, Boolean, TIMESTAMP
+from sqlalchemy import Column, Integer, ForeignKey, Date, Time, String, Numeric, Text, Boolean, TIMESTAMP, Index
 from sqlalchemy.sql import func
 from ..database import Base
 
@@ -12,10 +12,15 @@ class Appointment(Base):
     __tablename__ = "appointments"
 
     id = Column(Integer, primary_key=True, index=True)
-    client_id = Column(Integer, ForeignKey("clients.id", ondelete="CASCADE"), nullable=False)
+    client_id = Column(Integer, ForeignKey("clients.id", ondelete="CASCADE"), nullable=False, index=True)
     service_id = Column(Integer, ForeignKey("services.id"), nullable=False)
     appointment_date = Column(Date, nullable=False, index=True)
     appointment_time = Column(Time, nullable=False)
+
+    # Индекс для быстрого поиска дублей
+    __table_args__ = (
+        Index('ix_appointments_duplicate_check', 'client_id', 'appointment_date', 'appointment_time', 'status'),
+    )
     status = Column(String(20), default="pending")  # pending, confirmed, completed, cancelled, no_show
     duration_minutes = Column(Integer, nullable=False)
     total_price = Column(Numeric(10, 2), nullable=False)

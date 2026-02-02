@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои записи - Anasteisha</title>
+    <meta name="description" content="Просмотр и управление вашими записями в кабинет косметологии Anasteisha">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ========== HEADER ========== -->
+    <header class="header header-simple">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">Anasteisha</a>
+                <nav class="nav">
+                    <ul>
+                        <li><a href="/#services">Услуги</a></li>
+                        <li><a href="/#booking">Записаться</a></li>
+                        <li><a href="/#contacts">Контакты</a></li>
+                    </ul>
+                </nav>
+                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="my-bookings-page">
+        <div class="container">
+            <div class="page-header">
+                <h1><i class="fas fa-calendar-alt"></i> Мои записи</h1>
+                <p>Просмотр и управление вашими записями</p>
+            </div>
+
+            <!-- Phone Search Form -->
+            <div class="phone-search-card" id="phoneSearchCard">
+                <div class="phone-search-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <h2>Введите номер телефона</h2>
+                <p>Для просмотра ваших записей укажите номер телефона, который использовали при записи</p>
+                <form class="phone-search-form" id="phoneSearchForm">
+                    <div class="form-group">
+                        <input type="tel" id="searchPhone" name="phone" placeholder="+7 (999) 999-99-99" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Найти записи
+                    </button>
+                </form>
+            </div>
+
+            <!-- Bookings List -->
+            <div class="bookings-container" id="bookingsContainer" style="display: none;">
+                <div class="bookings-header">
+                    <h2><i class="fas fa-list"></i> Ваши записи</h2>
+                    <button class="btn btn-outline btn-sm" id="changePhoneBtn">
+                        <i class="fas fa-phone"></i> Изменить номер
+                    </button>
+                </div>
+                <div class="bookings-list" id="bookingsList"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== RESCHEDULE MODAL ========== -->
+    <div class="modal" id="rescheduleModal">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeRescheduleModal()">&times;</button>
+            <h3><i class="fas fa-calendar-alt"></i> Перенести запись</h3>
+            <div id="rescheduleContent"></div>
+        </div>
+    </div>
+
+    <!-- ========== CANCEL CONFIRM MODAL ========== -->
+    <div class="modal" id="cancelModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> Отменить запись?</h3>
+            <p id="cancelModalText">Вы уверены, что хотите отменить запись?</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeCancelModal()">Нет, оставить</button>
+                <button class="btn btn-danger" id="confirmCancelBtn">Да, отменить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer footer-simple">
+        <div class="container">
+            <div class="footer-simple-content">
+                <a href="/" class="footer-logo">Anasteisha</a>
+                <p>&copy; 2024-2026 Anasteisha. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/js/my-bookings.js"></script>
+</body>
+</html>

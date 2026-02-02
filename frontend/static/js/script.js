@@ -187,8 +187,18 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
             submitBtn.disabled = true;
 
-            // Simulate form submission (replace with actual API call)
-            setTimeout(function() {
+            // Send to API
+            fetch('/api/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
                 // Reset form
                 bookingForm.reset();
 
@@ -203,9 +213,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.');
                 }
 
-                // Log for debugging
-                console.log('Form submitted:', data);
-            }, 1500);
+                console.log('Booking sent:', result);
+            })
+            .catch(function(error) {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                alert('Произошла ошибка. Попробуйте позже или позвоните нам.');
+                console.error('Error:', error);
+            });
         });
     }
 
@@ -374,6 +391,8 @@ function closeModal() {
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal')) {
         closeModal();
+        closeReviewModal();
+        closeProblemModal();
     }
 });
 
@@ -381,8 +400,167 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeModal();
+        closeReviewModal();
+        closeProblemModal();
     }
 });
+
+// ==================== REVIEW MODAL ====================
+var currentRating = 0;
+
+function openReviewModal() {
+    var modal = document.getElementById('reviewModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeReviewModal() {
+    var modal = document.getElementById('reviewModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Star rating
+document.addEventListener('DOMContentLoaded', function() {
+    var stars = document.querySelectorAll('#starRating .star');
+    stars.forEach(function(star) {
+        star.addEventListener('click', function() {
+            currentRating = parseInt(this.getAttribute('data-rating'));
+            document.getElementById('reviewRating').value = currentRating;
+            updateStars(currentRating);
+        });
+        star.addEventListener('mouseenter', function() {
+            var rating = parseInt(this.getAttribute('data-rating'));
+            updateStars(rating);
+        });
+    });
+
+    var starRating = document.getElementById('starRating');
+    if (starRating) {
+        starRating.addEventListener('mouseleave', function() {
+            updateStars(currentRating);
+        });
+    }
+
+    // Review form submit
+    var reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (currentRating === 0) {
+                alert('Пожалуйста, поставьте оценку');
+                return;
+            }
+
+            var formData = new FormData(this);
+            var data = Object.fromEntries(formData.entries());
+            data.rating = currentRating;
+
+            var submitBtn = this.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            submitBtn.disabled = true;
+
+            fetch('/api/review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(result) {
+                reviewForm.reset();
+                currentRating = 0;
+                updateStars(0);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                closeReviewModal();
+                alert('Спасибо за ваш отзыв!');
+            })
+            .catch(function(error) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                alert('Произошла ошибка. Попробуйте позже.');
+                console.error('Error:', error);
+            });
+        });
+    }
+
+    // Problem form submit
+    var problemForm = document.getElementById('problemForm');
+    if (problemForm) {
+        problemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            var data = Object.fromEntries(formData.entries());
+            data.page_url = window.location.href;
+
+            var submitBtn = this.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            submitBtn.disabled = true;
+
+            fetch('/api/problem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(result) {
+                problemForm.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                closeProblemModal();
+                alert('Сообщение отправлено! Спасибо за обратную связь.');
+            })
+            .catch(function(error) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                alert('Произошла ошибка. Попробуйте позже.');
+                console.error('Error:', error);
+            });
+        });
+    }
+});
+
+function updateStars(rating) {
+    var stars = document.querySelectorAll('#starRating .star');
+    stars.forEach(function(star, index) {
+        var icon = star.querySelector('i');
+        if (index < rating) {
+            star.classList.add('active');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+        } else {
+            star.classList.remove('active');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// ==================== PROBLEM MODAL ====================
+function openProblemModal() {
+    var modal = document.getElementById('problemModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('problemPageUrl').value = window.location.href;
+    }
+}
+
+function closeProblemModal() {
+    var modal = document.getElementById('problemModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
 
 // Scroll to booking function (global)
 function scrollToBooking() {
@@ -398,3 +576,113 @@ function scrollToBooking() {
         });
     }
 }
+
+// ==================== THEME TOGGLE ====================
+(function() {
+    // Check for saved theme preference or system preference
+    function getPreferredTheme() {
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            return savedTheme;
+        }
+        // Check system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    }
+
+    // Apply theme
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }
+
+    // Apply theme immediately to prevent flash
+    applyTheme(getPreferredTheme());
+
+    // Setup toggle button after DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+        var themeToggle = document.getElementById('themeToggle');
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                var currentTheme = document.documentElement.getAttribute('data-theme');
+                var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+
+        // Listen for system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        }
+    });
+})();
+
+// ==================== WELCOME MODAL (New Visitors) ====================
+function openWelcomeModal() {
+    var modal = document.getElementById('welcomeModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeWelcomeModal() {
+    var modal = document.getElementById('welcomeModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    // Mark that user has seen the welcome modal
+    localStorage.setItem('welcomeShown', 'true');
+    localStorage.setItem('welcomeShownDate', new Date().toISOString());
+}
+
+// Show welcome modal for new visitors
+document.addEventListener('DOMContentLoaded', function() {
+    var welcomeShown = localStorage.getItem('welcomeShown');
+    var welcomeShownDate = localStorage.getItem('welcomeShownDate');
+
+    // Check if we should show the modal
+    var shouldShow = false;
+
+    if (!welcomeShown) {
+        // Never shown before - show it
+        shouldShow = true;
+    } else if (welcomeShownDate) {
+        // Check if 30 days have passed since last shown
+        var lastShown = new Date(welcomeShownDate);
+        var now = new Date();
+        var daysPassed = (now - lastShown) / (1000 * 60 * 60 * 24);
+        if (daysPassed > 30) {
+            shouldShow = true;
+        }
+    }
+
+    if (shouldShow) {
+        // Show modal after a delay (let the page load first)
+        setTimeout(function() {
+            // Don't show if preloader is still visible
+            var preloader = document.getElementById('preloader');
+            if (preloader && !preloader.classList.contains('hidden')) {
+                // Wait for preloader to hide
+                setTimeout(function() {
+                    openWelcomeModal();
+                }, 1500);
+            } else {
+                openWelcomeModal();
+            }
+        }, 2000);
+    }
+});

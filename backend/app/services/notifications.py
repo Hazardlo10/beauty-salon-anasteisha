@@ -390,3 +390,276 @@ async def notify_system_warning(
         message,
         context=context
     )
+
+
+# ==================== УВЕДОМЛЕНИЯ КЛИЕНТАМ ====================
+
+import asyncio
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+
+class ClientNotificationService:
+    """Сервис уведомлений клиентам (Email + Telegram)"""
+
+    @staticmethod
+    def _format_date(date_obj) -> str:
+        """Форматирование даты на русском"""
+        months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+        days = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье']
+        return f"{date_obj.day} {months[date_obj.month - 1]} ({days[date_obj.weekday()]})"
+
+    @staticmethod
+    async def send_email(to_email: str, subject: str, html_content: str, text_content: str = None) -> bool:
+        """Отправка email клиенту"""
+        if not all([settings.SMTP_HOST, settings.SMTP_USER, settings.SMTP_PASSWORD]):
+            logger.warning("Email не настроен (SMTP_HOST, SMTP_USER, SMTP_PASSWORD)")
+            return False
+
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_FROM_EMAIL or settings.SMTP_USER}>"
+            msg['To'] = to_email
+
+            if text_content:
+                msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
+            msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, lambda: ClientNotificationService._send_smtp(msg, to_email))
+            logger.info(f"Email отправлен: {to_email}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка отправки email: {e}")
+            return False
+
+    @staticmethod
+    def _send_smtp(msg, to_email):
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(settings.SMTP_FROM_EMAIL or settings.SMTP_USER, to_email, msg.as_string())
+
+    @staticmethod
+    async def send_telegram_to_client(telegram_id: int, text: str) -> bool:
+        """Отправка Telegram клиенту"""
+        bot_token = settings.TELEGRAM_SALON_BOT_TOKEN or settings.TELEGRAM_BOT_TOKEN
+        if not bot_token:
+            return False
+
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, json={"chat_id": telegram_id, "text": text, "parse_mode": "HTML"})
+                return response.status_code == 200
+        except Exception as e:
+            logger.error(f"Ошибка отправки Telegram клиенту: {e}")
+            return False
+
+    @staticmethod
+    async def send_telegram_to_specialist(text: str) -> bool:
+        """Отправка Telegram специалисту"""
+        bot_token = settings.TELEGRAM_SALON_BOT_TOKEN or settings.TELEGRAM_BOT_TOKEN
+        chat_id = settings.TELEGRAM_SALON_CHAT_ID or settings.TELEGRAM_ADMIN_CHAT_ID
+        if not bot_token or not chat_id:
+            return False
+
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"})
+                return response.status_code == 200
+        except Exception:
+            return False
+
+    # ==================== EMAIL ШАБЛОНЫ ====================
+
+    @staticmethod
+    def get_booking_created_email(client_name, service_name, appointment_date, appointment_time, price, appointment_id):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>body{{font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:#333}}.container{{max-width:600px;margin:0 auto;padding:20px}}.header{{background:linear-gradient(135deg,#c9a86c,#b8956a);color:white;padding:30px;text-align:center;border-radius:10px 10px 0 0}}.content{{background:#f9f9f9;padding:30px;border-radius:0 0 10px 10px}}.info-box{{background:white;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #c9a86c}}.footer{{text-align:center;padding:20px;color:#888;font-size:12px}}.btn{{display:inline-block;background:#c9a86c;color:white;padding:12px 30px;text-decoration:none;border-radius:25px}}</style></head>
+<body><div class="container"><div class="header"><h1>Anasteisha</h1><p>Кабинет косметологии</p></div>
+<div class="content"><h2>Здравствуйте, {client_name}!</h2><p>Ваша запись создана и ожидает подтверждения.</p>
+<div class="info-box"><p><strong>Услуга:</strong> {service_name}</p><p><strong>Дата:</strong> {date_str}</p><p><strong>Время:</strong> {appointment_time}</p><p><strong>Стоимость:</strong> {price:,.0f} ₽</p><p><strong>№ записи:</strong> #{appointment_id}</p></div>
+<p>Мы свяжемся с вами для подтверждения.</p><center><a href="{settings.SITE_URL}/my-bookings.html" class="btn">Мои записи</a></center></div>
+<div class="footer"><p>г. Анжеро-Судженск, ул. М.Горького 11А</p></div></div></body></html>"""
+        text = f"Здравствуйте, {client_name}!\n\nЗапись создана.\nУслуга: {service_name}\nДата: {date_str}\nВремя: {appointment_time}\nСтоимость: {price:,.0f} ₽\n№ записи: #{appointment_id}\n\nМы свяжемся с вами.\n\nAnasteisha"
+        return html, text
+
+    @staticmethod
+    def get_booking_confirmed_email(client_name, service_name, appointment_date, appointment_time, appointment_id):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>body{{font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:#333}}.container{{max-width:600px;margin:0 auto;padding:20px}}.header{{background:linear-gradient(135deg,#28a745,#20c997);color:white;padding:30px;text-align:center;border-radius:10px 10px 0 0}}.content{{background:#f9f9f9;padding:30px;border-radius:0 0 10px 10px}}.info-box{{background:white;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #28a745}}.footer{{text-align:center;padding:20px;color:#888;font-size:12px}}</style></head>
+<body><div class="container"><div class="header"><h1>✅ Запись подтверждена!</h1></div>
+<div class="content"><h2>Здравствуйте, {client_name}!</h2><p>Ваша запись подтверждена. Ждём вас!</p>
+<div class="info-box"><p><strong>Услуга:</strong> {service_name}</p><p><strong>Дата:</strong> {date_str}</p><p><strong>Время:</strong> {appointment_time}</p></div>
+<p><strong>Адрес:</strong> г. Анжеро-Судженск, ул. М.Горького 11А</p></div>
+<div class="footer"><p>Anasteisha</p></div></div></body></html>"""
+        text = f"Здравствуйте, {client_name}!\n\n✅ Запись подтверждена!\n\nУслуга: {service_name}\nДата: {date_str}\nВремя: {appointment_time}\n\nАдрес: г. Анжеро-Судженск, ул. М.Горького 11А\n\nЖдём вас!\nAnasteisha"
+        return html, text
+
+    @staticmethod
+    def get_booking_cancelled_email(client_name, service_name, appointment_date, appointment_time):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>body{{font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:#333}}.container{{max-width:600px;margin:0 auto;padding:20px}}.header{{background:#dc3545;color:white;padding:30px;text-align:center;border-radius:10px 10px 0 0}}.content{{background:#f9f9f9;padding:30px;border-radius:0 0 10px 10px}}.btn{{display:inline-block;background:#c9a86c;color:white;padding:12px 30px;text-decoration:none;border-radius:25px}}.footer{{text-align:center;padding:20px;color:#888;font-size:12px}}</style></head>
+<body><div class="container"><div class="header"><h1>Запись отменена</h1></div>
+<div class="content"><h2>Здравствуйте, {client_name}!</h2><p>Ваша запись была отменена.</p><p><strong>Услуга:</strong> {service_name}</p><p><strong>Дата:</strong> {date_str} в {appointment_time}</p>
+<center><a href="{settings.SITE_URL}/#booking" class="btn">Записаться снова</a></center></div>
+<div class="footer"><p>Anasteisha</p></div></div></body></html>"""
+        text = f"Здравствуйте, {client_name}!\n\nЗапись отменена.\nУслуга: {service_name}\nДата: {date_str} в {appointment_time}\n\nAnasteisha"
+        return html, text
+
+    # ==================== TELEGRAM ШАБЛОНЫ ====================
+
+    @staticmethod
+    def get_booking_created_tg(client_name, service_name, appointment_date, appointment_time, price, appointment_id):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        return f"📅 <b>Запись создана!</b>\n\n{client_name}, ваша запись оформлена.\n\n💆 {service_name}\n📆 {date_str}\n🕐 {appointment_time}\n💰 {price:,.0f} ₽\n\n№ #{appointment_id}\n\nМы свяжемся для подтверждения."
+
+    @staticmethod
+    def get_booking_confirmed_tg(client_name, service_name, appointment_date, appointment_time):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        return f"✅ <b>Запись подтверждена!</b>\n\n{client_name}, ждём вас!\n\n💆 {service_name}\n📆 {date_str}\n🕐 {appointment_time}\n\n📍 г. Анжеро-Судженск, ул. М.Горького 11А"
+
+    @staticmethod
+    def get_booking_cancelled_tg(client_name, service_name, appointment_date, appointment_time):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        return f"❌ <b>Запись отменена</b>\n\n{client_name}, ваша запись отменена.\n\n💆 {service_name}\n📆 {date_str} в {appointment_time}"
+
+    # ==================== НАПОМИНАНИЕ СПЕЦИАЛИСТУ ====================
+
+    @staticmethod
+    def get_call_reminder(client_name, client_phone, service_name, appointment_date, appointment_time, reason):
+        date_str = ClientNotificationService._format_date(appointment_date)
+        return f"""📞 <b>ПОЗВОНИТЕ КЛИЕНТУ!</b>
+
+{reason}
+
+👤 <b>Клиент:</b> {client_name}
+📞 <b>Телефон:</b> {client_phone}
+
+💆 {service_name}
+📆 {date_str}
+🕐 {appointment_time}
+
+<i>У клиента нет email/Telegram</i>"""
+
+
+# ==================== КОМПЛЕКСНЫЕ МЕТОДЫ ====================
+
+async def notify_client_booking_created(
+    client_email: Optional[str],
+    client_telegram_id: Optional[int],
+    client_name: str,
+    client_phone: str,
+    service_name: str,
+    appointment_date,
+    appointment_time: str,
+    price: float,
+    appointment_id: int
+):
+    """Уведомить клиента о создании записи"""
+    sent = False
+    tasks = []
+
+    if client_email:
+        html, text = ClientNotificationService.get_booking_created_email(
+            client_name, service_name, appointment_date, appointment_time, price, appointment_id
+        )
+        tasks.append(ClientNotificationService.send_email(client_email, f"Запись #{appointment_id} - Anasteisha", html, text))
+        sent = True
+
+    if client_telegram_id:
+        msg = ClientNotificationService.get_booking_created_tg(
+            client_name, service_name, appointment_date, appointment_time, price, appointment_id
+        )
+        tasks.append(ClientNotificationService.send_telegram_to_client(client_telegram_id, msg))
+        sent = True
+
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    # Нет контактов → напомнить специалисту позвонить
+    if not sent:
+        msg = ClientNotificationService.get_call_reminder(
+            client_name, client_phone, service_name, appointment_date, appointment_time,
+            "Новая запись - позвоните для подтверждения!"
+        )
+        await ClientNotificationService.send_telegram_to_specialist(msg)
+
+
+async def notify_client_booking_confirmed(
+    client_email: Optional[str],
+    client_telegram_id: Optional[int],
+    client_name: str,
+    client_phone: str,
+    service_name: str,
+    appointment_date,
+    appointment_time: str,
+    appointment_id: int
+):
+    """Уведомить клиента о подтверждении"""
+    sent = False
+    tasks = []
+
+    if client_email:
+        html, text = ClientNotificationService.get_booking_confirmed_email(
+            client_name, service_name, appointment_date, appointment_time, appointment_id
+        )
+        tasks.append(ClientNotificationService.send_email(client_email, "✅ Запись подтверждена - Anasteisha", html, text))
+        sent = True
+
+    if client_telegram_id:
+        msg = ClientNotificationService.get_booking_confirmed_tg(client_name, service_name, appointment_date, appointment_time)
+        tasks.append(ClientNotificationService.send_telegram_to_client(client_telegram_id, msg))
+        sent = True
+
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    if not sent:
+        msg = ClientNotificationService.get_call_reminder(
+            client_name, client_phone, service_name, appointment_date, appointment_time,
+            "Запись подтверждена - сообщите клиенту!"
+        )
+        await ClientNotificationService.send_telegram_to_specialist(msg)
+
+
+async def notify_client_booking_cancelled(
+    client_email: Optional[str],
+    client_telegram_id: Optional[int],
+    client_name: str,
+    client_phone: str,
+    service_name: str,
+    appointment_date,
+    appointment_time: str
+):
+    """Уведомить клиента об отмене"""
+    sent = False
+    tasks = []
+
+    if client_email:
+        html, text = ClientNotificationService.get_booking_cancelled_email(client_name, service_name, appointment_date, appointment_time)
+        tasks.append(ClientNotificationService.send_email(client_email, "Запись отменена - Anasteisha", html, text))
+        sent = True
+
+    if client_telegram_id:
+        msg = ClientNotificationService.get_booking_cancelled_tg(client_name, service_name, appointment_date, appointment_time)
+        tasks.append(ClientNotificationService.send_telegram_to_client(client_telegram_id, msg))
+        sent = True
+
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    if not sent:
+        msg = ClientNotificationService.get_call_reminder(
+            client_name, client_phone, service_name, appointment_date, appointment_time,
+            "Запись отменена - сообщите клиенту!"
+        )
+        await ClientNotificationService.send_telegram_to_specialist(msg)
