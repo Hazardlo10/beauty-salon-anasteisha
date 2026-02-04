@@ -349,18 +349,31 @@ async def create_appointment(data: AppointmentCreate, db: Session = Depends(get_
             client.email = data.client_email
         db.commit()
 
-    # Проверка на дубликат (клиент уже записан на это время)
-    existing = db.query(Appointment).filter(
+    # Проверка 1: клиент уже записан на это время
+    existing_client = db.query(Appointment).filter(
         Appointment.client_id == client.id,
         Appointment.appointment_date == apt_date,
         Appointment.appointment_time == apt_time,
         Appointment.status.in_(["pending", "confirmed"])
     ).first()
 
-    if existing:
+    if existing_client:
         raise HTTPException(
             status_code=400,
             detail="У вас уже есть запись на это время. Проверьте раздел 'Мои записи'."
+        )
+
+    # Проверка 2: слот уже занят другим клиентом (главная проверка!)
+    existing_slot = db.query(Appointment).filter(
+        Appointment.appointment_date == apt_date,
+        Appointment.appointment_time == apt_time,
+        Appointment.status.in_(["pending", "confirmed"])
+    ).first()
+
+    if existing_slot:
+        raise HTTPException(
+            status_code=400,
+            detail="Это время уже занято. Пожалуйста, выберите другое время."
         )
 
     # Создаём запись
