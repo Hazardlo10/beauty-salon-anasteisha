@@ -32,15 +32,15 @@ class BookingWidget {
             console.error('Error loading services:', error);
             // Fallback услуги если API недоступен
             this.services = [
-                { id: 1, name: 'Атравматическая чистка лица', price: 2500, duration_minutes: 60, category: 'Лицо' },
-                { id: 2, name: 'Лифтинг-омоложение лица', price: 2800, duration_minutes: 90, category: 'Лицо' },
-                { id: 3, name: 'Липосомальное обновление кожи', price: 2800, duration_minutes: 90, category: 'Лицо' },
-                { id: 4, name: 'Ферментотерапия лица', price: 2800, duration_minutes: 75, category: 'Лицо' },
-                { id: 5, name: 'Безынъекционный ботокс лица', price: 2800, duration_minutes: 90, category: 'Лицо' },
-                { id: 6, name: 'Атравматическая чистка спины', price: 4500, duration_minutes: 90, category: 'Комплекс' },
-                { id: 7, name: 'Лифтинг шеи и декольте', price: 3500, duration_minutes: 75, category: 'Комплекс' },
-                { id: 8, name: 'Обновление лица и декольте', price: 3500, duration_minutes: 120, category: 'Комплекс' },
-                { id: 9, name: 'Ботокс лица и шеи', price: 3800, duration_minutes: 105, category: 'Комплекс' },
+                { id: 1, name: 'Атравматическая чистка лица', price: 2500, duration_minutes: 60, category: 'Лицо', description: 'Бережное очищение кожи без травмирования. Подходит для чувствительной кожи.' },
+                { id: 2, name: 'Лифтинг-омоложение лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Подтяжка и омоложение кожи с использованием профессиональных препаратов.' },
+                { id: 3, name: 'Липосомальное обновление кожи', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Глубокое обновление кожи с помощью липосомальных технологий.' },
+                { id: 4, name: 'Ферментотерапия лица', price: 2800, duration_minutes: 75, category: 'Лицо', description: 'Очищение и восстановление кожи с помощью натуральных ферментов.' },
+                { id: 5, name: 'Безынъекционный ботокс лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Разглаживание морщин без инъекций с помощью специальных пептидов.' },
+                { id: 6, name: 'Атравматическая чистка спины', price: 4500, duration_minutes: 90, category: 'Комплекс', description: 'Профессиональная чистка кожи спины без травмирования.' },
+                { id: 7, name: 'Лифтинг шеи и декольте', price: 3500, duration_minutes: 75, category: 'Комплекс', description: 'Подтяжка и омоложение зоны шеи и декольте.' },
+                { id: 8, name: 'Обновление лица и декольте', price: 3500, duration_minutes: 120, category: 'Комплекс', description: 'Комплексное обновление кожи лица и зоны декольте.' },
+                { id: 9, name: 'Ботокс лица и шеи', price: 3800, duration_minutes: 105, category: 'Комплекс', description: 'Безынъекционный ботокс-эффект для лица и шеи.' },
             ];
         }
     }
@@ -177,6 +177,7 @@ class BookingWidget {
 
             services.forEach(service => {
                 const icon = getIcon(service.name);
+                const description = service.description || '';
                 html += `
                     <div class="service-option" data-service-id="${service.id}">
                         <div class="service-option-header">
@@ -188,7 +189,13 @@ class BookingWidget {
                             </div>
                         </div>
                         <div class="service-option-info">
-                            <span class="service-name">${service.name}</span>
+                            <span class="service-name" data-has-description="${description ? 'true' : 'false'}">
+                                ${service.name}
+                                ${description ? '<i class="fas fa-info-circle service-info-icon"></i>' : ''}
+                            </span>
+                            <div class="service-description" style="display: none;">
+                                ${description}
+                            </div>
                             <span class="service-details">
                                 <i class="fas fa-magic"></i> FlaxTap
                             </span>
@@ -402,6 +409,29 @@ class BookingWidget {
     setupEventListeners() {
         // Service selection
         document.addEventListener('click', (e) => {
+            // Toggle description on service name click
+            const serviceName = e.target.closest('.service-name');
+            if (serviceName) {
+                e.stopPropagation();
+                const descriptionEl = serviceName.parentElement.querySelector('.service-description');
+                if (descriptionEl && descriptionEl.textContent.trim()) {
+                    const isVisible = descriptionEl.style.display !== 'none';
+                    // Hide all other descriptions
+                    document.querySelectorAll('.service-description').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    document.querySelectorAll('.service-name').forEach(el => {
+                        el.classList.remove('description-open');
+                    });
+                    // Toggle this one
+                    if (!isVisible) {
+                        descriptionEl.style.display = 'block';
+                        serviceName.classList.add('description-open');
+                    }
+                }
+                return;
+            }
+
             const serviceOption = e.target.closest('.service-option');
             if (serviceOption) {
                 document.querySelectorAll('.service-option').forEach(el => el.classList.remove('selected'));

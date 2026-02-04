@@ -2254,6 +2254,55 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     color: var(--gold-dark, #8B6914);
 }
 
+/* Service Name with Info Icon */
+.service-name[data-has-description="true"] {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.service-info-icon {
+    font-size: 12px;
+    color: var(--gold, #B8860B);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.service-name:hover .service-info-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.service-name.description-open .service-info-icon {
+    opacity: 1;
+    color: var(--gold-dark, #8B6914);
+}
+
+/* Service Description */
+.service-description {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--gray, #5A5A5A);
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.05) 0%, rgba(184, 134, 11, 0.08) 100%);
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-top: 8px;
+    border-left: 3px solid var(--gold, #B8860B);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .service-details {
     font-size: 12px;
     color: var(--gray, #5A5A5A);
