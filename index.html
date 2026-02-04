@@ -461,33 +461,68 @@
     <!-- ========== BOOKING SECTION ========== -->
     <section class="booking" id="booking">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-badge light">Запись онлайн</span>
-                <h2 class="section-title light">Записаться на процедуру</h2>
-                <p class="section-subtitle light">Выберите удобное время и запишитесь онлайн</p>
-                <div class="section-divider light">
-                    <span class="divider-line"></span>
-                    <i class="fas fa-calendar-check"></i>
-                    <span class="divider-line"></span>
+            <!-- Left Side - Info Panel -->
+            <div class="booking-visual" data-aos="fade-right">
+                <div class="booking-visual-content">
+                    <span class="section-badge">Онлайн-запись</span>
+                    <h2>Запишитесь<br>на процедуру</h2>
+                    <p class="booking-visual-subtitle">
+                        Выберите удобное время и дату. Мы подтвердим вашу запись в течение 15 минут.
+                    </p>
+
+                    <div class="booking-benefits">
+                        <div class="booking-benefit">
+                            <div class="booking-benefit-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <span class="booking-benefit-text">Быстрое подтверждение записи</span>
+                        </div>
+                        <div class="booking-benefit">
+                            <div class="booking-benefit-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <span class="booking-benefit-text">Гибкий выбор даты и времени</span>
+                        </div>
+                        <div class="booking-benefit">
+                            <div class="booking-benefit-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <span class="booking-benefit-text">Напоминание о визите</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-contact">
+                        <h4>Связаться напрямую</h4>
+                        <div class="contact-links">
+                            <a href="tel:+79000000000" class="contact-link">
+                                <i class="fas fa-phone"></i> Позвонить
+                            </a>
+                            <a href="https://t.me/anasteisha" class="contact-link">
+                                <i class="fab fa-telegram"></i> Telegram
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Booking Widget Container -->
-            <div id="bookingWidget" class="booking-widget-container" data-aos="fade-up"></div>
+            <!-- Right Side - Booking Widget -->
+            <div class="booking-widget-section" data-aos="fade-left">
+                <div class="booking-widget-header">
+                    <h3>Выберите услугу</h3>
+                    <p>Шаг за шагом оформите запись онлайн</p>
+                </div>
 
-            <!-- Альтернативные способы связи -->
-            <div class="booking-alternatives" data-aos="fade-up">
-                <p>Или свяжитесь напрямую:</p>
-                <div class="booking-links">
-                    <a href="tel:+79000000000" class="booking-link">
-                        <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
-                    </a>
-                    <a href="https://t.me/anasteisha" class="booking-link">
-                        <i class="fab fa-telegram"></i> Telegram
-                    </a>
-                    <a href="/my-bookings.html" class="booking-link">
-                        <i class="fas fa-list"></i> Мои записи
-                    </a>
+                <!-- Booking Widget Container -->
+                <div id="bookingWidget" class="booking-widget-container"></div>
+
+                <!-- Альтернативные способы -->
+                <div class="booking-alternatives">
+                    <p>Уже записывались?</p>
+                    <div class="booking-links">
+                        <a href="/my-bookings.html" class="booking-link">
+                            <i class="fas fa-list"></i> Мои записи
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
