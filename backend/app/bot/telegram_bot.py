@@ -47,27 +47,48 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     telegram_id = user.id
 
+    # Проверяем, является ли пользователь специалистом
+    specialist = is_specialist(telegram_id)
+
     # Проверяем, есть ли клиент в базе
     db = get_db()
     try:
         client = db.query(Client).filter(Client.telegram_id == telegram_id).first()
 
-        if client:
+        if specialist:
+            welcome_text = "Здравствуйте! 👩‍⚕️\n\n"
+            welcome_text += (
+                "*Команды для специалиста:*\n"
+                "/today - 📅 Записи на сегодня\n"
+                "/tomorrow - 📆 Записи на завтра\n"
+                "/week - 🗓 Записи на неделю\n"
+                "/slots - ⏰ Свободные слоты\n"
+                "/slots 15.02 - слоты на дату\n\n"
+                "*Общие команды:*\n"
+                "/services - 💅 Список услуг\n"
+            )
+        elif client:
             welcome_text = f"С возвращением, {client.name}! 🌸\n\n"
+            welcome_text += (
+                "Я бот для онлайн-записи в косметологический кабинет.\n\n"
+                "Доступные команды:\n"
+                "/book - 📅 Записаться на прием\n"
+                "/myappointments - 📋 Мои записи\n"
+                "/services - 💅 Список услуг\n"
+                "/cancel - ❌ Отменить запись\n"
+            )
         else:
-            welcome_text = f"Здравствуйте! 🌸\n\n"
+            welcome_text = "Здравствуйте! 🌸\n\n"
+            welcome_text += (
+                "Я бот для онлайн-записи в косметологический кабинет.\n\n"
+                "Доступные команды:\n"
+                "/book - 📅 Записаться на прием\n"
+                "/myappointments - 📋 Мои записи\n"
+                "/services - 💅 Список услуг\n"
+                "/cancel - ❌ Отменить запись\n"
+            )
 
-        welcome_text += (
-            "Я бот для онлайн-записи в косметологический кабинет Beauty.\n\n"
-            "Доступные команды:\n"
-            "/book - 📅 Записаться на прием\n"
-            "/myappointments - 📋 Мои записи\n"
-            "/services - 💅 Список услуг\n"
-            "/cancel - ❌ Отменить запись\n"
-            "/help - ❓ Помощь\n"
-        )
-
-        await update.message.reply_text(welcome_text)
+        await update.message.reply_text(welcome_text, parse_mode="Markdown")
     finally:
         db.close()
 
@@ -530,6 +551,307 @@ async def cancel_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 
+# ==================== КОМАНДЫ ДЛЯ СПЕЦИАЛИСТА ====================
+
+def is_specialist(user_id: int) -> bool:
+    """Проверить, является ли пользователь специалистом"""
+    salon_chat_id = settings.TELEGRAM_SALON_CHAT_ID
+    admin_chat_id = settings.TELEGRAM_ADMIN_CHAT_ID
+    allowed_ids = []
+    if salon_chat_id:
+        allowed_ids.append(int(salon_chat_id))
+    if admin_chat_id:
+        allowed_ids.append(int(admin_chat_id))
+    return user_id in allowed_ids
+
+
+async def today_appointments(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /today - записи на сегодня (только для специалиста)"""
+    user_id = update.effective_user.id
+
+    if not is_specialist(user_id):
+        await update.message.reply_text("❌ Эта команда доступна только для специалиста.")
+        return
+
+    db = get_db()
+    try:
+        today = date.today()
+        appointments = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == today,
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).order_by(Appointment.appointment_time).all()
+
+        if not appointments:
+            await update.message.reply_text(
+                f"📅 *Сегодня ({today.strftime('%d.%m.%Y')})*\n\n"
+                "Записей нет! 🎉",
+                parse_mode="Markdown"
+            )
+            return
+
+        text = f"📅 *Записи на сегодня ({today.strftime('%d.%m.%Y')}):*\n\n"
+
+        for apt in appointments:
+            client = db.query(Client).filter(Client.id == apt.client_id).first()
+            service = db.query(Service).filter(Service.id == apt.service_id).first()
+            time_str = apt.appointment_time.strftime('%H:%M')
+            status_emoji = "✅" if apt.status == "confirmed" else "⏳"
+
+            text += (
+                f"{status_emoji} *{time_str}* — {service.name if service else 'Услуга'}\n"
+                f"   👤 {client.name if client else 'Клиент'}\n"
+                f"   📱 {client.phone if client else ''}\n\n"
+            )
+
+        text += f"Всего записей: {len(appointments)}"
+
+        await update.message.reply_text(text, parse_mode="Markdown")
+
+    finally:
+        db.close()
+
+
+async def tomorrow_appointments(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /tomorrow - записи на завтра (только для специалиста)"""
+    user_id = update.effective_user.id
+
+    if not is_specialist(user_id):
+        await update.message.reply_text("❌ Эта команда доступна только для специалиста.")
+        return
+
+    db = get_db()
+    try:
+        tomorrow = date.today() + timedelta(days=1)
+        day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        day_name = day_names[tomorrow.weekday()]
+
+        appointments = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == tomorrow,
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).order_by(Appointment.appointment_time).all()
+
+        if not appointments:
+            await update.message.reply_text(
+                f"📅 *Завтра ({day_name}, {tomorrow.strftime('%d.%m.%Y')})*\n\n"
+                "Записей нет! 🎉",
+                parse_mode="Markdown"
+            )
+            return
+
+        text = f"📅 *Записи на завтра ({day_name}, {tomorrow.strftime('%d.%m.%Y')}):*\n\n"
+
+        for apt in appointments:
+            client = db.query(Client).filter(Client.id == apt.client_id).first()
+            service = db.query(Service).filter(Service.id == apt.service_id).first()
+            time_str = apt.appointment_time.strftime('%H:%M')
+            status_emoji = "✅" if apt.status == "confirmed" else "⏳"
+
+            text += (
+                f"{status_emoji} *{time_str}* — {service.name if service else 'Услуга'}\n"
+                f"   👤 {client.name if client else 'Клиент'}\n"
+                f"   📱 {client.phone if client else ''}\n\n"
+            )
+
+        text += f"Всего записей: {len(appointments)}"
+
+        await update.message.reply_text(text, parse_mode="Markdown")
+
+    finally:
+        db.close()
+
+
+async def week_appointments(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /week - записи на неделю (только для специалиста)"""
+    user_id = update.effective_user.id
+
+    if not is_specialist(user_id):
+        await update.message.reply_text("❌ Эта команда доступна только для специалиста.")
+        return
+
+    db = get_db()
+    try:
+        today = date.today()
+        week_end = today + timedelta(days=7)
+
+        appointments = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date >= today,
+                Appointment.appointment_date < week_end,
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).order_by(Appointment.appointment_date, Appointment.appointment_time).all()
+
+        if not appointments:
+            await update.message.reply_text(
+                f"📅 *Записи на неделю*\n"
+                f"({today.strftime('%d.%m')} — {week_end.strftime('%d.%m.%Y')})\n\n"
+                "Записей нет! 🎉",
+                parse_mode="Markdown"
+            )
+            return
+
+        text = f"📅 *Записи на неделю:*\n\n"
+        day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        current_date = None
+
+        for apt in appointments:
+            # Новый день
+            if apt.appointment_date != current_date:
+                current_date = apt.appointment_date
+                day_name = day_names[current_date.weekday()]
+                text += f"\n*{day_name}, {current_date.strftime('%d.%m')}:*\n"
+
+            client = db.query(Client).filter(Client.id == apt.client_id).first()
+            service = db.query(Service).filter(Service.id == apt.service_id).first()
+            time_str = apt.appointment_time.strftime('%H:%M')
+            status_emoji = "✅" if apt.status == "confirmed" else "⏳"
+
+            text += f"  {status_emoji} {time_str} — {client.name if client else '?'} ({service.name if service else '?'})\n"
+
+        text += f"\n📊 Всего: {len(appointments)} записей"
+
+        await update.message.reply_text(text, parse_mode="Markdown")
+
+    finally:
+        db.close()
+
+
+async def available_slots(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /slots - свободные слоты (только для специалиста)"""
+    user_id = update.effective_user.id
+
+    if not is_specialist(user_id):
+        await update.message.reply_text("❌ Эта команда доступна только для специалиста.")
+        return
+
+    # Парсим дату из аргументов (по умолчанию - сегодня)
+    args = context.args
+    if args:
+        try:
+            check_date = datetime.strptime(args[0], "%d.%m.%Y").date()
+        except ValueError:
+            try:
+                check_date = datetime.strptime(args[0], "%d.%m").date()
+                check_date = check_date.replace(year=date.today().year)
+            except ValueError:
+                await update.message.reply_text(
+                    "❌ Неверный формат даты.\n"
+                    "Используйте: /slots или /slots 15.02.2025"
+                )
+                return
+    else:
+        check_date = date.today()
+
+    db = get_db()
+    try:
+        # Определяем рабочие часы
+        is_weekend = check_date.weekday() >= 5
+        if is_weekend:
+            work_start = dt_time(10, 0)
+            work_end = dt_time(18, 0)
+        else:
+            work_start = dt_time(10, 0)
+            work_end = dt_time(20, 0)
+
+        slot_duration = 30  # минут
+
+        # Получаем занятые слоты
+        appointments = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == check_date,
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).all()
+
+        booked_times = set()
+        for apt in appointments:
+            # Учитываем длительность процедуры
+            apt_start = datetime.combine(check_date, apt.appointment_time)
+            apt_end = apt_start + timedelta(minutes=apt.duration_minutes)
+            current = apt_start
+            while current < apt_end:
+                booked_times.add(current.time())
+                current += timedelta(minutes=slot_duration)
+
+        # Генерируем все слоты
+        all_slots = []
+        current_time = work_start
+        while current_time < work_end:
+            all_slots.append(current_time)
+            current_dt = datetime.combine(check_date, current_time)
+            current_dt += timedelta(minutes=slot_duration)
+            current_time = current_dt.time()
+
+        # Разделяем на свободные и занятые
+        free_slots = [t for t in all_slots if t not in booked_times]
+        busy_slots = [t for t in all_slots if t in booked_times]
+
+        day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        day_name = day_names[check_date.weekday()]
+
+        text = f"📅 *{day_name}, {check_date.strftime('%d.%m.%Y')}*\n"
+        text += f"⏰ Рабочие часы: {work_start.strftime('%H:%M')} — {work_end.strftime('%H:%M')}\n\n"
+
+        if free_slots:
+            text += f"✅ *Свободные слоты ({len(free_slots)}):*\n"
+            # Группируем по периодам
+            morning = [t for t in free_slots if t.hour < 12]
+            afternoon = [t for t in free_slots if 12 <= t.hour < 17]
+            evening = [t for t in free_slots if t.hour >= 17]
+
+            if morning:
+                text += f"🌅 Утро: {', '.join(t.strftime('%H:%M') for t in morning)}\n"
+            if afternoon:
+                text += f"☀️ День: {', '.join(t.strftime('%H:%M') for t in afternoon)}\n"
+            if evening:
+                text += f"🌙 Вечер: {', '.join(t.strftime('%H:%M') for t in evening)}\n"
+        else:
+            text += "❌ Все слоты заняты!\n"
+
+        text += f"\n📊 Занято: {len(busy_slots)} / {len(all_slots)} слотов"
+
+        await update.message.reply_text(text, parse_mode="Markdown")
+
+    finally:
+        db.close()
+
+
+async def send_specialist_welcome(application):
+    """Отправить инструкцию специалисту при запуске бота"""
+    salon_chat_id = settings.TELEGRAM_SALON_CHAT_ID
+    if not salon_chat_id:
+        return
+
+    welcome_text = (
+        "🤖 *Бот запущен!*\n\n"
+        "📋 *Доступные команды:*\n\n"
+        "👁 *Просмотр записей:*\n"
+        "/today — записи на сегодня\n"
+        "/tomorrow — записи на завтра\n"
+        "/week — записи на неделю\n\n"
+        "⏰ *Свободные слоты:*\n"
+        "/slots — слоты на сегодня\n"
+        "/slots 15.02 — слоты на дату\n\n"
+        "💅 *Услуги:*\n"
+        "/services — список услуг\n\n"
+        "ℹ️ Новые записи будут приходить автоматически с кнопками подтверждения."
+    )
+
+    try:
+        await application.bot.send_message(
+            chat_id=salon_chat_id,
+            text=welcome_text,
+            parse_mode="Markdown"
+        )
+        print(f"✅ Инструкция отправлена специалисту (chat_id: {salon_chat_id})")
+    except Exception as e:
+        print(f"⚠️ Не удалось отправить инструкцию: {e}")
+
+
 def main():
     """Запуск бота"""
     # Создаем приложение
@@ -554,6 +876,15 @@ def main():
     application.add_handler(CommandHandler("services", services_list))
     application.add_handler(CommandHandler("myappointments", my_appointments))
     application.add_handler(booking_conv)
+
+    # Команды для специалиста
+    application.add_handler(CommandHandler("today", today_appointments))
+    application.add_handler(CommandHandler("tomorrow", tomorrow_appointments))
+    application.add_handler(CommandHandler("week", week_appointments))
+    application.add_handler(CommandHandler("slots", available_slots))
+
+    # Отправляем инструкцию специалисту при запуске
+    application.post_init = send_specialist_welcome
 
     # Запускаем бота
     print("🤖 Telegram бот запущен!")
