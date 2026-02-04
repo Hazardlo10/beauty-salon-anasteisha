@@ -33,8 +33,11 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# Состояния разговора
+# Состояния разговора для клиентов
 SELECTING_SERVICE, SELECTING_DATE, SELECTING_TIME, ENTERING_PHONE, ENTERING_NAME, CONFIRMING = range(6)
+
+# Состояния для ручной записи специалистом
+MANUAL_SERVICE, MANUAL_DATE, MANUAL_TIME, MANUAL_CLIENT_NAME, MANUAL_CLIENT_PHONE, MANUAL_CONFIRM = range(100, 106)
 
 
 def get_db() -> Session:
@@ -63,7 +66,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "/tomorrow - 📆 Записи на завтра\n"
                 "/week - 🗓 Записи на неделю\n"
                 "/slots - ⏰ Свободные слоты\n"
-                "/slots 15.02 - слоты на дату\n\n"
+                "/add - ✏️ Записать клиента вручную\n\n"
                 "*Общие команды:*\n"
                 "/services - 💅 Список услуг\n"
             )
@@ -820,6 +823,326 @@ async def available_slots(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.close()
 
 
+# ==================== РУЧНАЯ ЗАПИСЬ КЛИЕНТА ====================
+
+async def manual_add_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Команда /add - начать ручную запись клиента"""
+    user_id = update.effective_user.id
+
+    if not is_specialist(user_id):
+        await update.message.reply_text("❌ Эта команда доступна только для специалиста.")
+        return ConversationHandler.END
+
+    db = get_db()
+    try:
+        services = db.query(Service).filter(Service.is_active == True).all()
+
+        if not services:
+            await update.message.reply_text("Услуги не добавлены в базу.")
+            return ConversationHandler.END
+
+        keyboard = []
+        for service in services:
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{service.name} — {service.price}₽",
+                    callback_data=f"madd_svc_{service.id}"
+                )
+            ])
+        keyboard.append([InlineKeyboardButton("❌ Отмена", callback_data="madd_cancel")])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await update.message.reply_text(
+            "📝 *Ручная запись клиента*\n\n"
+            "Шаг 1/5: Выберите услугу:",
+            reply_markup=reply_markup,
+            parse_mode="Markdown"
+        )
+
+        return MANUAL_SERVICE
+    finally:
+        db.close()
+
+
+async def manual_service_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Выбор услуги для ручной записи"""
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "madd_cancel":
+        await query.edit_message_text("Запись отменена.")
+        return ConversationHandler.END
+
+    service_id = int(query.data.split("_")[2])
+    context.user_data["manual_service_id"] = service_id
+
+    db = get_db()
+    try:
+        service = db.query(Service).filter(Service.id == service_id).first()
+        context.user_data["manual_service_name"] = service.name
+        context.user_data["manual_service_price"] = float(service.price)
+        context.user_data["manual_service_duration"] = service.duration_minutes
+    finally:
+        db.close()
+
+    # Выбор даты
+    keyboard = []
+    today = date.today()
+    day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+
+    for i in range(14):  # 2 недели
+        day = today + timedelta(days=i)
+        day_name = day_names[day.weekday()]
+        keyboard.append([
+            InlineKeyboardButton(
+                f"{day_name}, {day.strftime('%d.%m')}",
+                callback_data=f"madd_date_{day.isoformat()}"
+            )
+        ])
+
+    keyboard.append([InlineKeyboardButton("❌ Отмена", callback_data="madd_cancel")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await query.edit_message_text(
+        f"✅ Услуга: {service.name}\n\n"
+        "Шаг 2/5: Выберите дату:",
+        reply_markup=reply_markup
+    )
+
+    return MANUAL_DATE
+
+
+async def manual_date_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Выбор даты для ручной записи"""
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "madd_cancel":
+        await query.edit_message_text("Запись отменена.")
+        return ConversationHandler.END
+
+    selected_date = query.data.split("_")[2]
+    context.user_data["manual_date"] = selected_date
+
+    # Получаем свободные слоты
+    db = get_db()
+    try:
+        check_date = datetime.fromisoformat(selected_date).date()
+        is_weekend = check_date.weekday() >= 5
+
+        if is_weekend:
+            work_start = dt_time(10, 0)
+            work_end = dt_time(18, 0)
+        else:
+            work_start = dt_time(10, 0)
+            work_end = dt_time(20, 0)
+
+        slot_duration = 30
+
+        # Занятые слоты
+        appointments = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == selected_date,
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).all()
+
+        booked_times = set()
+        for apt in appointments:
+            apt_start = datetime.combine(check_date, apt.appointment_time)
+            apt_end = apt_start + timedelta(minutes=apt.duration_minutes)
+            current = apt_start
+            while current < apt_end:
+                booked_times.add(current.time())
+                current += timedelta(minutes=slot_duration)
+
+        # Свободные слоты
+        free_slots = []
+        current_time = work_start
+        while current_time < work_end:
+            if current_time not in booked_times:
+                free_slots.append(current_time)
+            current_dt = datetime.combine(check_date, current_time)
+            current_dt += timedelta(minutes=slot_duration)
+            current_time = current_dt.time()
+
+        if not free_slots:
+            await query.edit_message_text(
+                "❌ На эту дату нет свободных слотов.\n"
+                "Используйте /add для выбора другой даты."
+            )
+            return ConversationHandler.END
+
+        # Группируем слоты по 4 в ряд
+        keyboard = []
+        row = []
+        for slot in free_slots:
+            row.append(InlineKeyboardButton(
+                slot.strftime("%H:%M"),
+                callback_data=f"madd_time_{slot.strftime('%H:%M')}"
+            ))
+            if len(row) == 4:
+                keyboard.append(row)
+                row = []
+        if row:
+            keyboard.append(row)
+
+        keyboard.append([InlineKeyboardButton("❌ Отмена", callback_data="madd_cancel")])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        day_name = day_names[check_date.weekday()]
+
+        await query.edit_message_text(
+            f"✅ Услуга: {context.user_data['manual_service_name']}\n"
+            f"✅ Дата: {day_name}, {check_date.strftime('%d.%m.%Y')}\n\n"
+            f"Шаг 3/5: Выберите время ({len(free_slots)} слотов):",
+            reply_markup=reply_markup
+        )
+
+        return MANUAL_TIME
+
+    finally:
+        db.close()
+
+
+async def manual_time_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Выбор времени для ручной записи"""
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "madd_cancel":
+        await query.edit_message_text("Запись отменена.")
+        return ConversationHandler.END
+
+    selected_time = query.data.split("_")[2]
+    context.user_data["manual_time"] = selected_time
+
+    await query.edit_message_text(
+        f"✅ Услуга: {context.user_data['manual_service_name']}\n"
+        f"✅ Дата: {context.user_data['manual_date']}\n"
+        f"✅ Время: {selected_time}\n\n"
+        "Шаг 4/5: Введите *имя клиента*:",
+        parse_mode="Markdown"
+    )
+
+    return MANUAL_CLIENT_NAME
+
+
+async def manual_client_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Ввод имени клиента"""
+    name = update.message.text.strip()
+    context.user_data["manual_client_name"] = name
+
+    await update.message.reply_text(
+        f"✅ Имя: {name}\n\n"
+        "Шаг 5/5: Введите *номер телефона* клиента (или - если неизвестен):",
+        parse_mode="Markdown"
+    )
+
+    return MANUAL_CLIENT_PHONE
+
+
+async def manual_client_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Ввод телефона клиента и подтверждение"""
+    phone = update.message.text.strip()
+    if phone == "-":
+        phone = None
+    context.user_data["manual_client_phone"] = phone
+
+    # Показываем подтверждение
+    date_obj = datetime.fromisoformat(context.user_data["manual_date"]).date()
+    day_names = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+
+    text = (
+        "📋 *Подтверждение записи:*\n\n"
+        f"👤 Клиент: {context.user_data['manual_client_name']}\n"
+        f"📱 Телефон: {phone or 'не указан'}\n\n"
+        f"💅 Услуга: {context.user_data['manual_service_name']}\n"
+        f"💰 Стоимость: {context.user_data['manual_service_price']} ₽\n"
+        f"📅 Дата: {day_names[date_obj.weekday()]}, {date_obj.strftime('%d.%m.%Y')}\n"
+        f"🕐 Время: {context.user_data['manual_time']}\n\n"
+        "Сохранить запись?"
+    )
+
+    keyboard = [
+        [InlineKeyboardButton("✅ Сохранить", callback_data="madd_save")],
+        [InlineKeyboardButton("❌ Отмена", callback_data="madd_cancel")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+
+    return MANUAL_CONFIRM
+
+
+async def manual_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Сохранение ручной записи"""
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "madd_cancel":
+        await query.edit_message_text("Запись отменена.")
+        return ConversationHandler.END
+
+    db = get_db()
+    try:
+        # Ищем или создаём клиента
+        phone = context.user_data.get("manual_client_phone")
+        name = context.user_data["manual_client_name"]
+
+        client = None
+        if phone:
+            client = db.query(Client).filter(Client.phone == phone).first()
+
+        if not client:
+            client = Client(
+                name=name,
+                phone=phone or f"manual_{datetime.now().timestamp()}"
+            )
+            db.add(client)
+            db.commit()
+            db.refresh(client)
+
+        # Создаём запись
+        appointment = Appointment(
+            client_id=client.id,
+            service_id=context.user_data["manual_service_id"],
+            appointment_date=context.user_data["manual_date"],
+            appointment_time=context.user_data["manual_time"],
+            status="confirmed",  # Сразу подтверждённая
+            duration_minutes=context.user_data["manual_service_duration"],
+            total_price=context.user_data["manual_service_price"],
+            payment_status="unpaid",
+            notes="Ручная запись через Telegram"
+        )
+        db.add(appointment)
+        db.commit()
+
+        await query.edit_message_text(
+            f"✅ *Запись сохранена!*\n\n"
+            f"👤 {name}\n"
+            f"📅 {context.user_data['manual_date']} в {context.user_data['manual_time']}\n"
+            f"💅 {context.user_data['manual_service_name']}",
+            parse_mode="Markdown"
+        )
+
+        return ConversationHandler.END
+
+    except Exception as e:
+        await query.edit_message_text(f"❌ Ошибка: {str(e)}")
+        return ConversationHandler.END
+    finally:
+        db.close()
+
+
+async def manual_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Отмена ручной записи"""
+    await update.message.reply_text("Запись отменена.")
+    return ConversationHandler.END
+
+
 async def send_specialist_welcome(application):
     """Отправить инструкцию специалисту при запуске бота"""
     salon_chat_id = settings.TELEGRAM_SALON_CHAT_ID
@@ -836,6 +1159,8 @@ async def send_specialist_welcome(application):
         "⏰ *Свободные слоты:*\n"
         "/slots — слоты на сегодня\n"
         "/slots 15.02 — слоты на дату\n\n"
+        "✏️ *Ручная запись:*\n"
+        "/add — записать клиента вручную\n\n"
         "💅 *Услуги:*\n"
         "/services — список услуг\n\n"
         "ℹ️ Новые записи будут приходить автоматически с кнопками подтверждения."
@@ -882,6 +1207,21 @@ def main():
     application.add_handler(CommandHandler("tomorrow", tomorrow_appointments))
     application.add_handler(CommandHandler("week", week_appointments))
     application.add_handler(CommandHandler("slots", available_slots))
+
+    # Ручная запись клиента (для специалиста)
+    manual_booking_conv = ConversationHandler(
+        entry_points=[CommandHandler("add", manual_add_start)],
+        states={
+            MANUAL_SERVICE: [CallbackQueryHandler(manual_service_selected, pattern="^madd_")],
+            MANUAL_DATE: [CallbackQueryHandler(manual_date_selected, pattern="^madd_")],
+            MANUAL_TIME: [CallbackQueryHandler(manual_time_selected, pattern="^madd_")],
+            MANUAL_CLIENT_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, manual_client_name)],
+            MANUAL_CLIENT_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, manual_client_phone)],
+            MANUAL_CONFIRM: [CallbackQueryHandler(manual_confirm, pattern="^madd_")],
+        },
+        fallbacks=[CommandHandler("cancel", manual_cancel)],
+    )
+    application.add_handler(manual_booking_conv)
 
     # Отправляем инструкцию специалисту при запуске
     application.post_init = send_specialist_welcome
