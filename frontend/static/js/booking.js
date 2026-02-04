@@ -6,14 +6,32 @@
 class BookingWidget {
     constructor() {
         this.currentStep = 1;
-        this.totalSteps = 4;
+        this.totalSteps = 3;  // Упрощено: Услуга → Дата+Время → Данные
         this.selectedService = null;
         this.selectedDate = null;
         this.selectedTime = null;
         this.services = [];
         this.availableSlots = [];
 
+        // Загрузка сохранённых данных клиента
+        this.savedClient = this.loadSavedClient();
+
         this.init();
+    }
+
+    loadSavedClient() {
+        try {
+            const saved = localStorage.getItem('anasteisha_client');
+            return saved ? JSON.parse(saved) : null;
+        } catch {
+            return null;
+        }
+    }
+
+    saveClient(name, phone, email) {
+        try {
+            localStorage.setItem('anasteisha_client', JSON.stringify({ name, phone, email }));
+        } catch {}
     }
 
     async init() {
@@ -49,9 +67,19 @@ class BookingWidget {
         const container = document.getElementById('bookingWidget');
         if (!container) return;
 
+        // Приветствие для повторных клиентов
+        const welcomeBack = this.savedClient ? `
+            <div class="welcome-back-banner">
+                <i class="fas fa-heart"></i>
+                <span>С возвращением, ${this.savedClient.name}!</span>
+            </div>
+        ` : '';
+
         container.innerHTML = `
             <div class="booking-widget">
-                <!-- Progress Steps -->
+                ${welcomeBack}
+
+                <!-- Progress Steps - Упрощено до 3 шагов -->
                 <div class="booking-progress">
                     <div class="progress-step active" data-step="1">
                         <span class="step-number">1</span>
@@ -60,17 +88,12 @@ class BookingWidget {
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="2">
                         <span class="step-number">2</span>
-                        <span class="step-label">Дата</span>
+                        <span class="step-label">Дата и время</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="3">
                         <span class="step-number">3</span>
-                        <span class="step-label">Время</span>
-                    </div>
-                    <div class="progress-line"></div>
-                    <div class="progress-step" data-step="4">
-                        <span class="step-number">4</span>
-                        <span class="step-label">Данные</span>
+                        <span class="step-label">Контакты</span>
                     </div>
                 </div>
 
@@ -82,39 +105,51 @@ class BookingWidget {
                         <div class="services-list" id="servicesList"></div>
                     </div>
 
-                    <!-- Step 2: Date Selection -->
+                    <!-- Step 2: Date + Time Selection (объединено) -->
                     <div class="booking-step" data-step="2">
-                        <h3><i class="fas fa-calendar-alt"></i> Выберите дату</h3>
-                        <div class="calendar-container" id="calendarContainer"></div>
+                        <h3><i class="fas fa-calendar-alt"></i> Выберите дату и время</h3>
+                        <div class="selected-service-info" id="selectedServiceInfo"></div>
+                        <div class="datetime-selector">
+                            <div class="calendar-container" id="calendarContainer"></div>
+                            <div class="time-slots-container">
+                                <div class="time-slots-header" id="timeSlotsHeader"></div>
+                                <div class="time-slots" id="timeSlots"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Step 3: Time Selection -->
+                    <!-- Step 3: Contact Info -->
                     <div class="booking-step" data-step="3">
-                        <h3><i class="fas fa-clock"></i> Выберите время</h3>
-                        <div class="selected-info" id="selectedInfo"></div>
-                        <div class="time-slots" id="timeSlots"></div>
-                    </div>
-
-                    <!-- Step 4: Contact Info -->
-                    <div class="booking-step" data-step="4">
                         <h3><i class="fas fa-user"></i> Ваши данные</h3>
                         <div class="booking-summary" id="bookingSummary"></div>
                         <form class="contact-form" id="bookingContactForm">
                             <div class="form-group">
                                 <label for="bookingName"><i class="fas fa-user"></i> Имя *</label>
-                                <input type="text" id="bookingName" name="name" required placeholder="Введите ваше имя">
+                                <input type="text" id="bookingName" name="name" required
+                                    placeholder="Введите ваше имя"
+                                    value="${this.savedClient?.name || ''}">
                             </div>
                             <div class="form-group">
                                 <label for="bookingPhone"><i class="fas fa-phone"></i> Телефон *</label>
-                                <input type="tel" id="bookingPhone" name="phone" required placeholder="+7 (999) 999-99-99">
+                                <input type="tel" id="bookingPhone" name="phone" required
+                                    placeholder="+7 (999) 999-99-99"
+                                    value="${this.savedClient?.phone || ''}">
                             </div>
                             <div class="form-group">
                                 <label for="bookingEmail"><i class="fas fa-envelope"></i> Email</label>
-                                <input type="email" id="bookingEmail" name="email" placeholder="your@email.com">
+                                <input type="email" id="bookingEmail" name="email"
+                                    placeholder="your@email.com"
+                                    value="${this.savedClient?.email || ''}">
                             </div>
                             <div class="form-group">
                                 <label for="bookingNotes"><i class="fas fa-comment"></i> Пожелания</label>
                                 <textarea id="bookingNotes" name="notes" placeholder="Дополнительная информация..."></textarea>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="rememberMe" checked>
+                                    <span>Запомнить мои данные</span>
+                                </label>
                             </div>
                         </form>
                     </div>
@@ -275,7 +310,17 @@ class BookingWidget {
 
     async loadTimeSlots(dateStr) {
         const container = document.getElementById('timeSlots');
+        const header = document.getElementById('timeSlotsHeader');
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>';
+
+        // Показать выбранную дату в заголовке
+        const dateObj = new Date(dateStr);
+        const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+        const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        if (header) {
+            header.innerHTML = `<h4><i class="fas fa-clock"></i> ${dateObj.getDate()} ${monthNames[dateObj.getMonth()]}, ${dayNames[dateObj.getDay()]}</h4>`;
+        }
 
         try {
             const serviceId = this.selectedService?.id || '';
@@ -539,17 +584,33 @@ class BookingWidget {
         nextBtn.style.display = step < this.totalSteps ? 'flex' : 'none';
         submitBtn.style.display = step === this.totalSteps ? 'flex' : 'none';
 
-        // Load step-specific content
+        // Load step-specific content (новая логика для 3 шагов)
         if (step === 2) {
+            this.showSelectedServiceInfo();
             this.renderCalendar();
-        } else if (step === 3 && this.selectedDate) {
-            this.updateSelectedInfo();
-            this.loadTimeSlots(this.selectedDate);
-        } else if (step === 4) {
+            // Показать заглушку для слотов времени
+            const header = document.getElementById('timeSlotsHeader');
+            const slots = document.getElementById('timeSlots');
+            if (header) header.innerHTML = '<p class="select-date-hint"><i class="fas fa-hand-point-left"></i> Выберите дату</p>';
+            if (slots) slots.innerHTML = '';
+        } else if (step === 3) {
             this.updateSummary();
         }
 
         this.updateNextButton();
+    }
+
+    showSelectedServiceInfo() {
+        const container = document.getElementById('selectedServiceInfo');
+        if (!container || !this.selectedService) return;
+
+        container.innerHTML = `
+            <div class="selected-service-badge">
+                <i class="fas fa-spa"></i>
+                <span>${this.selectedService.name}</span>
+                <span class="service-badge-price">${this.selectedService.price.toLocaleString()} ₽</span>
+            </div>
+        `;
     }
 
     validateStep(step) {
@@ -557,10 +618,9 @@ class BookingWidget {
             case 1:
                 return this.selectedService !== null;
             case 2:
-                return this.selectedDate !== null;
+                // Теперь нужны и дата, и время на одном шаге
+                return this.selectedDate !== null && this.selectedTime !== null;
             case 3:
-                return this.selectedTime !== null;
-            case 4:
                 const name = document.getElementById('bookingName')?.value;
                 const phone = document.getElementById('bookingPhone')?.value;
                 return name && phone;
@@ -596,13 +656,17 @@ class BookingWidget {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
 
+        const clientName = document.getElementById('bookingName').value;
+        const clientPhone = document.getElementById('bookingPhone').value;
+        const clientEmail = document.getElementById('bookingEmail').value || null;
+
         const data = {
             service_id: this.selectedService.id,
             appointment_date: this.selectedDate,
             appointment_time: this.selectedTime,
-            client_name: document.getElementById('bookingName').value,
-            client_phone: document.getElementById('bookingPhone').value,
-            client_email: document.getElementById('bookingEmail').value || null,
+            client_name: clientName,
+            client_phone: clientPhone,
+            client_email: clientEmail,
             notes: document.getElementById('bookingNotes').value || null
         };
 
@@ -616,6 +680,11 @@ class BookingWidget {
             const result = await response.json();
 
             if (response.ok && result.id) {
+                // Сохранить данные клиента если отмечен чекбокс
+                const rememberMe = document.getElementById('rememberMe')?.checked;
+                if (rememberMe) {
+                    this.saveClient(clientName, clientPhone, clientEmail);
+                }
                 this.showSuccess(result);
             } else {
                 throw new Error(result.detail || 'Ошибка при создании записи');
