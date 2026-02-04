@@ -413,6 +413,22 @@ async def confirm_booking(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Сохраняем запись в базу данных
     db = get_db()
     try:
+        # Проверяем, не занят ли слот (защита от дублей!)
+        existing_slot = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == context.user_data["date"],
+                Appointment.appointment_time == context.user_data["time"],
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).first()
+
+        if existing_slot:
+            await query.edit_message_text(
+                "❌ К сожалению, это время только что заняли.\n\n"
+                "Пожалуйста, используйте /book чтобы выбрать другое время."
+            )
+            return ConversationHandler.END
+
         telegram_id = update.effective_user.id
         telegram_username = update.effective_user.username
 
@@ -1088,6 +1104,24 @@ async def manual_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     db = get_db()
     try:
+        # Проверяем, не занят ли слот (защита от дублей!)
+        existing_slot = db.query(Appointment).filter(
+            and_(
+                Appointment.appointment_date == context.user_data["manual_date"],
+                Appointment.appointment_time == context.user_data["manual_time"],
+                Appointment.status.in_(["pending", "confirmed"])
+            )
+        ).first()
+
+        if existing_slot:
+            await query.edit_message_text(
+                "❌ *Ошибка: это время уже занято!*\n\n"
+                "Возможно, кто-то записался через сайт.\n"
+                "Используйте /slots чтобы увидеть свободные слоты.",
+                parse_mode="Markdown"
+            )
+            return ConversationHandler.END
+
         # Ищем или создаём клиента
         phone = context.user_data.get("manual_client_phone")
         name = context.user_data["manual_client_name"]
