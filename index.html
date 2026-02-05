@@ -17,6 +17,32 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Yandex.Metrika counter -->
+    <!-- ИНСТРУКЦИЯ:
+         1. Зайдите на https://metrika.yandex.ru
+         2. Создайте счётчик для вашего сайта
+         3. Замените XXXXXXXX на ваш ID счётчика (число) - в 3 местах ниже
+    -->
+    <script type="text/javascript">
+        // ЗАМЕНИТЕ XXXXXXXX на ваш ID счётчика!
+        window.YM_COUNTER_ID = XXXXXXXX;
+
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(window.YM_COUNTER_ID, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
     <!-- ========== MAINTENANCE MODE ========== -->
@@ -36,8 +62,8 @@
             </div>
             <div class="maintenance-contact">
                 <p>Для записи свяжитесь с нами:</p>
-                <a href="tel:+79000000000" class="maintenance-phone">
-                    <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                <a href="tel:+79832139059" class="maintenance-phone">
+                    <i class="fas fa-phone"></i> +7 (983) 213-90-59
                 </a>
                 <a href="https://t.me/anasteisha" class="maintenance-telegram">
                     <i class="fab fa-telegram"></i> Telegram
@@ -70,7 +96,11 @@
         <div class="header-main">
             <div class="container">
                 <div class="header-content">
-                    <a href="#" class="logo">Anasteisha</a>
+                    <a href="#" class="logo">
+                        <span class="logo-ornament-left">❧</span>
+                        Anasteisha
+                        <span class="logo-ornament-right">❧</span>
+                    </a>
 
                     <!-- Mobile Menu Toggle -->
                     <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Меню">
@@ -82,7 +112,7 @@
                     <nav class="nav" id="mainNav">
                         <ul>
                             <li><a href="#services">Услуги</a></li>
-                            <li><a href="#about">Обо мне</a></li>
+                            <li><a href="#about">О специалисте</a></li>
                             <li><a href="#gallery">Результаты</a></li>
                             <li><a href="#booking">Запись</a></li>
                             <li><a href="#contacts">Контакты</a></li>
@@ -162,9 +192,9 @@
                 </div>
 
                 <div class="hero-buttons" data-aos="fade-up" data-aos-delay="800">
-                    <a href="#booking" class="btn btn-primary btn-lg">
+                    <button class="btn btn-primary btn-lg" onclick="openConsultationModal()">
                         <i class="fas fa-calendar-check"></i> Записаться на консультацию
-                    </a>
+                    </button>
                     <a href="#services" class="btn btn-outline btn-lg">
                         <i class="fas fa-list"></i> Смотреть услуги
                     </a>
@@ -187,7 +217,13 @@
                 <p class="section-subtitle">Полный спектр профессионального ухода на основе системы FlaxTap</p>
                 <div class="section-divider">
                     <span class="divider-line"></span>
-                    <i class="fas fa-spa"></i>
+                    <svg class="ornament-svg" width="60" height="20" viewBox="0 0 60 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 2 Q20 10 30 18 Q40 10 30 2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M30 5 Q25 10 30 15 Q35 10 30 5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.6"/>
+                        <path d="M10 10 Q20 5 30 10 Q40 5 50 10" stroke="currentColor" stroke-width="1" fill="none"/>
+                        <circle cx="5" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                        <circle cx="55" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                    </svg>
                     <span class="divider-line"></span>
                 </div>
             </div>
@@ -198,10 +234,11 @@
                     <i class="fas fa-face-smile"></i> Процедуры для лица
                 </h3>
                 <div class="services-grid">
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service="chistka-lica">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-leaf"></i></div>
                             <span class="service-tag">Популярное</span>
+                            <button class="service-info-btn" onclick="showServiceInfo('chistka-lica')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Атравматическая чистка лица</h4>
                         <p class="service-system">FlaxPeelFace</p>
@@ -213,9 +250,10 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service="lifting-lica">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-arrow-up"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('lifting-lica')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Лифтинг-омоложение лица</h4>
                         <p class="service-system">FlaxLift</p>
@@ -227,9 +265,10 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service="liposomalnoe">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('liposomalnoe')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Липосомальное обновление кожи</h4>
                         <p class="service-system">FlaxNewSkin</p>
@@ -241,9 +280,10 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service="fermentoterapiya">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-flask"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('fermentoterapiya')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Ферментотерапия лица</h4>
                         <p class="service-system">FlaxEnzyme</p>
@@ -255,10 +295,11 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="500" data-service="botoks-lica">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-star"></i></div>
                             <span class="service-tag premium">Премиум</span>
+                            <button class="service-info-btn" onclick="showServiceInfo('botoks-lica')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Безынъекционный ботокс</h4>
                         <p class="service-system">FlaxSpicule</p>
@@ -278,9 +319,10 @@
                     <i class="fas fa-spa"></i> Комплексные процедуры
                 </h3>
                 <div class="services-grid">
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="100" data-service="chistka-spiny">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-leaf"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('chistka-spiny')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Атравматическая чистка спины</h4>
                         <p class="service-system">FlaxPeelFace</p>
@@ -292,9 +334,10 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="200" data-service="lifting-shei">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-arrow-up"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('lifting-shei')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Лифтинг шеи и декольте</h4>
                         <p class="service-system">FlaxLift</p>
@@ -306,9 +349,10 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300" data-service="obnovlenie-kompleks">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                            <button class="service-info-btn" onclick="showServiceInfo('obnovlenie-kompleks')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Обновление лица и декольте</h4>
                         <p class="service-system">FlaxNewSkin</p>
@@ -320,10 +364,11 @@
                         <a href="#booking" class="service-book-btn">Записаться</a>
                     </div>
 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400" data-service="botoks-kompleks">
                         <div class="service-card-header">
                             <div class="service-icon"><i class="fas fa-star"></i></div>
                             <span class="service-tag premium">Премиум</span>
+                            <button class="service-info-btn" onclick="showServiceInfo('botoks-kompleks')" title="Подробнее"><i class="fas fa-info-circle"></i></button>
                         </div>
                         <h4>Ботокс лица и шеи</h4>
                         <p class="service-system">FlaxSpicule</p>
@@ -346,7 +391,7 @@
                         <p>При покупке курса процедур: <strong>3+1</strong>, <strong>5+1</strong>, <strong>10+1</strong></p>
                         <span class="promo-highlight">Одна процедура в подарок!</span>
                     </div>
-                    <a href="#booking" class="btn btn-white">Узнать подробнее</a>
+                    <button class="btn btn-white" onclick="openConsultationModal()">Узнать подробнее</button>
                 </div>
             </div>
         </div>
@@ -426,9 +471,63 @@
                         </div>
                     </div>
 
-                    <a href="#booking" class="btn btn-primary">
+                    <button class="btn btn-primary" onclick="openConsultationModal()">
                         <i class="fas fa-calendar-check"></i> Записаться на консультацию
-                    </a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CERTIFICATES SECTION ========== -->
+    <section class="certificates" id="certificates">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Квалификация</span>
+                <h2 class="section-title">Сертификаты и дипломы</h2>
+                <p class="section-subtitle">Подтверждение профессионализма и постоянного развития</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-award"></i>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+
+            <div class="certificates-grid" data-aos="fade-up">
+                <div class="certificate-card">
+                    <div class="certificate-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Профессиональное образование</h4>
+                    <p>Диплом косметолога-эстетиста</p>
+                    <span class="certificate-year">2019</span>
+                </div>
+
+                <div class="certificate-card">
+                    <div class="certificate-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>FlaxTap Professional</h4>
+                    <p>Сертификат мастера системы FlaxTap</p>
+                    <span class="certificate-year">2021</span>
+                </div>
+
+                <div class="certificate-card">
+                    <div class="certificate-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>Повышение квалификации</h4>
+                    <p>Безинъекционные методики омоложения</p>
+                    <span class="certificate-year">2023</span>
+                </div>
+
+                <div class="certificate-card">
+                    <div class="certificate-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h4>Мастер-классы</h4>
+                    <p>Регулярное обучение у ведущих специалистов</p>
+                    <span class="certificate-year">2024</span>
                 </div>
             </div>
         </div>
@@ -443,7 +542,13 @@
                 <p class="section-subtitle">Реальные результаты наших клиентов</p>
                 <div class="section-divider">
                     <span class="divider-line"></span>
-                    <i class="fas fa-camera"></i>
+                    <svg class="ornament-svg" width="60" height="20" viewBox="0 0 60 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 2 Q20 10 30 18 Q40 10 30 2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M30 5 Q25 10 30 15 Q35 10 30 5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.6"/>
+                        <path d="M10 10 Q20 5 30 10 Q40 5 50 10" stroke="currentColor" stroke-width="1" fill="none"/>
+                        <circle cx="5" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                        <circle cx="55" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                    </svg>
                     <span class="divider-line"></span>
                 </div>
             </div>
@@ -458,71 +563,284 @@
         </div>
     </section>
 
-    <!-- ========== BOOKING SECTION ========== -->
-    <section class="booking" id="booking">
+    <!-- ========== REVIEWS SECTION ========== -->
+    <section class="reviews-section" id="reviews">
         <div class="container">
-            <!-- Left Side - Info Panel -->
-            <div class="booking-visual" data-aos="fade-right">
-                <div class="booking-visual-content">
-                    <span class="section-badge">Онлайн-запись</span>
-                    <h2>Запишитесь<br>на процедуру</h2>
-                    <p class="booking-visual-subtitle">
-                        Выберите удобное время и дату. Мы подтвердим вашу запись в течение 15 минут.
-                    </p>
-
-                    <div class="booking-benefits">
-                        <div class="booking-benefit">
-                            <div class="booking-benefit-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <span class="booking-benefit-text">Быстрое подтверждение записи</span>
-                        </div>
-                        <div class="booking-benefit">
-                            <div class="booking-benefit-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <span class="booking-benefit-text">Гибкий выбор даты и времени</span>
-                        </div>
-                        <div class="booking-benefit">
-                            <div class="booking-benefit-icon">
-                                <i class="fas fa-bell"></i>
-                            </div>
-                            <span class="booking-benefit-text">Напоминание о визите</span>
-                        </div>
-                    </div>
-
-                    <div class="booking-contact">
-                        <h4>Связаться напрямую</h4>
-                        <div class="contact-links">
-                            <a href="tel:+79000000000" class="contact-link">
-                                <i class="fas fa-phone"></i> Позвонить
-                            </a>
-                            <a href="https://t.me/anasteisha" class="contact-link">
-                                <i class="fab fa-telegram"></i> Telegram
-                            </a>
-                        </div>
-                    </div>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Отзывы</span>
+                <h2 class="section-title">Что говорят клиенты</h2>
+                <p class="section-subtitle">Каждый отзыв — это история преображения и доверия. Благодарю вас за тёплые слова!</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <svg class="ornament-svg" width="60" height="20" viewBox="0 0 60 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30 2 Q20 10 30 18 Q40 10 30 2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M30 5 Q25 10 30 15 Q35 10 30 5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.6"/>
+                        <path d="M10 10 Q20 5 30 10 Q40 5 50 10" stroke="currentColor" stroke-width="1" fill="none"/>
+                        <circle cx="5" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                        <circle cx="55" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+                    </svg>
+                    <span class="divider-line"></span>
                 </div>
             </div>
 
-            <!-- Right Side - Booking Widget -->
-            <div class="booking-widget-section" data-aos="fade-left">
-                <div class="booking-widget-header">
-                    <h3>Выберите услугу</h3>
-                    <p>Шаг за шагом оформите запись онлайн</p>
+            <div class="reviews-quote" data-aos="fade-up">
+                <i class="fas fa-quote-left"></i>
+                <p>Ваша красота — моё вдохновение. Спасибо, что доверяете мне самое ценное — заботу о себе!</p>
+                <span class="quote-author">— Анастасия Крылова</span>
+            </div>
+
+            <div class="reviews-container" id="reviewsContainer" data-aos="fade-up">
+                <div class="reviews-grid reviews-static">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar"><i class="fas fa-user"></i></div>
+                            <div class="review-meta">
+                                <span class="review-name">Елена</span>
+                                <span class="review-date">15 января 2025</span>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="review-text">Делала чистку лица у Анастасии — результат превзошёл ожидания! Кожа стала чистой, поры сузились, цвет лица выровнялся. Очень деликатная и приятная процедура, никакого дискомфорта. Обязательно вернусь на курс!</p>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar"><i class="fas fa-user"></i></div>
+                            <div class="review-meta">
+                                <span class="review-name">Ольга</span>
+                                <span class="review-date">28 декабря 2024</span>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="review-text">Прошла курс лифтинга из 5 процедур. Эффект потрясающий — овал лица подтянулся, морщинки разгладились, кожа как будто помолодела на несколько лет. Анастасия — настоящий профессионал, всё объясняет, подбирает уход индивидуально.</p>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar"><i class="fas fa-user"></i></div>
+                            <div class="review-meta">
+                                <span class="review-name">Марина</span>
+                                <span class="review-date">10 декабря 2024</span>
+                            </div>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="review-text">Очень боялась косметологических процедур, но Анастасия развеяла все страхи. Безинъекционный ботокс — это находка! Никакой боли, а эффект виден сразу. Межбровная морщина стала менее заметной, лоб разгладился. Рекомендую всем!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ SECTION ========== -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Вопросы</span>
+                <h2 class="section-title">Частые вопросы</h2>
+                <p class="section-subtitle">Ответы на популярные вопросы о процедурах</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-question-circle"></i>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+
+            <div class="faq-list" data-aos="fade-up">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Больно ли делать процедуры?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Все процедуры системы FlaxTap абсолютно безболезненны и комфортны. Вы почувствуете только приятное тепло и лёгкий массажный эффект. Это одно из главных преимуществ безинъекционных методик.</p>
+                    </div>
                 </div>
 
-                <!-- Booking Widget Container -->
-                <div id="bookingWidget" class="booking-widget-container"></div>
-
-                <!-- Альтернативные способы -->
-                <div class="booking-alternatives">
-                    <p>Уже записывались?</p>
-                    <div class="booking-links">
-                        <a href="/my-bookings.html" class="booking-link">
-                            <i class="fas fa-list"></i> Мои записи
-                        </a>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Когда будет виден результат?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Первые изменения заметны сразу после процедуры — кожа становится более свежей и сияющей. Накопительный эффект проявляется после курса из 3-5 процедур: улучшается тонус, разглаживаются мелкие морщины, выравнивается цвет лица.</p>
                     </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Как часто нужно делать процедуры?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Рекомендуемый курс — 5-10 процедур с интервалом 7-14 дней. После курса достаточно поддерживающих процедур 1 раз в месяц. Точную программу составлю индивидуально на консультации.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Есть ли противопоказания?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Процедуры не проводятся при: беременности и лактации, острых воспалениях на коже, онкологии, обострении хронических заболеваний. Полный список противопоказаний обсудим на консультации.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Как подготовиться к процедуре?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Особой подготовки не требуется. Рекомендую за 2-3 дня не делать агрессивные пилинги и не загорать. Приходите с чистым лицом без макияжа, либо я сама очищу кожу перед процедурой.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Можно ли совмещать с другими процедурами?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Да, процедуры FlaxTap отлично сочетаются с массажем лица, масками и домашним уходом. Не рекомендую совмещать в один день с инъекциями и аппаратными методиками — лучше сделать перерыв 1-2 недели.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== BOOKING SECTION ========== -->
+    <section class="booking booking-centered booking-section-placeholder" id="booking">
+        <div class="container">
+            <div class="booking-header" data-aos="fade-up">
+                <span class="section-badge">Онлайн-запись</span>
+                <h2>Запишитесь на процедуру</h2>
+                <p class="booking-subtitle">Выберите удобное время и дату. Мы подтвердим вашу запись в течение 15 минут.</p>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="100" style="text-align: center; margin: 30px 0;">
+                <button class="btn-book-now open-booking-modal" onclick="openBookingModal()">
+                    <i class="fas fa-calendar-plus"></i> Записаться онлайн
+                </button>
+            </div>
+
+            <!-- Benefits Bar -->
+            <div class="booking-benefits-bar" data-aos="fade-up" data-aos-delay="200">
+                <div class="benefit-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Быстрое подтверждение</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Гибкий выбор времени</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Напоминание о визите</span>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div class="booking-links-centered" data-aos="fade-up" data-aos-delay="300">
+                <a href="/my-bookings.html" class="booking-link-btn">
+                    <i class="fas fa-list"></i> Мои записи
+                </a>
+                <span class="booking-divider">или</span>
+                <a href="tel:+79832139059" class="booking-link-btn booking-link-secondary">
+                    <i class="fas fa-phone"></i> Позвонить
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== BLOG/TIPS SECTION ========== -->
+    <section class="blog" id="blog">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Полезное</span>
+                <h2 class="section-title">Советы по уходу</h2>
+                <p class="section-subtitle">Рекомендации для сохранения красоты и молодости кожи</p>
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="divider-line"></span>
+                </div>
+            </div>
+
+            <div class="blog-grid" data-aos="fade-up">
+                <article class="blog-card">
+                    <div class="blog-card-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h4>Защита от солнца</h4>
+                    <p>SPF-защита — основа anti-age ухода. Используйте крем с SPF 30-50 ежедневно, даже зимой и в пасмурную погоду. 80% старения кожи вызвано солнцем!</p>
+                    <span class="blog-tag">Ежедневный уход</span>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-card-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h4>Увлажнение изнутри</h4>
+                    <p>Пейте 1.5-2 литра воды в день. Обезвоженная кожа быстрее стареет, теряет упругость и сияние. Вода — самый доступный эликсир молодости.</p>
+                    <span class="blog-tag">Здоровье</span>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-card-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h4>Ночной уход</h4>
+                    <p>Ночью кожа восстанавливается в 3 раза активнее. Используйте питательные кремы и сыворотки перед сном. Не забывайте про зону шеи и декольте!</p>
+                    <span class="blog-tag">Домашний уход</span>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-card-icon">
+                        <i class="fas fa-hand-sparkles"></i>
+                    </div>
+                    <h4>Очищение — это важно</h4>
+                    <p>Двойное очищение вечером: сначала гидрофильное масло, затем мягкая пенка. Это удалит макияж, SPF и загрязнения без пересушивания кожи.</p>
+                    <span class="blog-tag">Очищение</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== MAP SECTION ========== -->
+    <section class="map-section" id="map">
+        <div class="container">
+            <h2 class="section-title">Как нас найти</h2>
+            <p class="section-subtitle">г. Анжеро-Судженск, ул. М.Горького, 11А</p>
+            <div class="map-container">
+                <iframe
+                    src="https://yandex.ru/map-widget/v1/?ll=86.029722%2C56.080833&z=17&l=map&pt=86.029722%2C56.080833%2Cpm2rdm"
+                    width="100%"
+                    height="400"
+                    frameborder="0"
+                    allowfullscreen="true"
+                    loading="lazy"
+                    title="Карта расположения салона Anasteisha">
+                </iframe>
+            </div>
+            <div class="map-info">
+                <div class="map-info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>ул. М.Горького, 11А</span>
+                </div>
+                <div class="map-info-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+79832139059">+7 (983) 213-90-59</a>
+                </div>
+                <div class="map-info-item">
+                    <i class="far fa-clock"></i>
+                    <span>Пн-Пт: 10:00-20:00, Сб-Вс: 10:00-18:00</span>
                 </div>
             </div>
         </div>
@@ -533,13 +851,15 @@
         <div class="container">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <a href="#" class="footer-logo">Anasteisha</a>
+                    <a href="#" class="footer-logo">
+                        <span class="logo-ornament-left">❧</span>
+                        Anasteisha
+                        <span class="logo-ornament-right">❧</span>
+                    </a>
                     <p class="footer-tagline">Кабинет профессиональной косметологии</p>
                     <p class="footer-slogan">Молодость и красота без инъекций</p>
                     <div class="footer-social">
-                        <a href="#" class="social-link" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/79832139059" target="_blank" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
 
@@ -551,8 +871,8 @@
 
                 <div class="footer-section">
                     <h4>Контакты</h4>
-                    <a href="tel:+79000000000"><i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX</a>
-                    <a href="mailto:anasteisha@example.com"><i class="fas fa-envelope"></i> anasteisha@example.com</a>
+                    <a href="tel:+79832139059"><i class="fas fa-phone"></i> +7 (983) 213-90-59</a>
+                    <a href="https://wa.me/79832139059" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
                 </div>
 
                 <div class="footer-section">
@@ -566,16 +886,13 @@
                 <button class="btn btn-outline btn-sm" onclick="openReviewModal()">
                     <i class="fas fa-star"></i> Оставить отзыв
                 </button>
-                <button class="btn btn-outline btn-sm" onclick="openProblemModal()">
-                    <i class="fas fa-bug"></i> Сообщить о проблеме
+                <button class="btn btn-outline btn-sm" onclick="openSupportModal()">
+                    <i class="fas fa-headset"></i> Техподдержка
                 </button>
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2024-2026 Anasteisha. Все права защищены.</p>
-                <p class="developer-credit">
-                    Разработка сайта: <a href="https://github.com/Koshkoder" target="_blank">Сальская Ксения (@Koshkoder)</a>
-                </p>
+                <p>&copy; 2024-2026 Anasteisha | Сайт: <a href="https://t.me/Koshkoder" target="_blank">@Koshkoder</a></p>
             </div>
         </div>
     </footer>
@@ -707,8 +1024,104 @@
         </div>
     </div>
 
+    <!-- ========== SUPPORT MODAL ========== -->
+    <div class="modal" id="supportModal">
+        <div class="modal-content modal-form">
+            <button class="modal-close" onclick="closeSupportModal()">&times;</button>
+            <h3><i class="fas fa-headset"></i> Техподдержка</h3>
+            <p class="modal-subtitle">Опишите проблему — мы разберёмся!</p>
+            <form id="supportForm">
+                <div class="form-group">
+                    <label for="supportName">Ваше имя</label>
+                    <input type="text" id="supportName" name="name" placeholder="Как вас зовут?">
+                </div>
+                <div class="form-group">
+                    <label for="supportEmail">Email для ответа</label>
+                    <input type="email" id="supportEmail" name="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="supportMessage">Описание проблемы *</label>
+                    <textarea id="supportMessage" name="message" required placeholder="Что случилось? Опишите проблему подробнее..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-paper-plane"></i> Отправить
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Consultation Modal -->
+    <div class="consultation-modal" id="consultationModal">
+        <div class="consultation-modal-content">
+            <button class="modal-close" onclick="closeConsultationModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="consultation-header">
+                <div class="consultation-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Консультация</h3>
+                <p>Выберите интересующую процедуру или позвоните мастеру напрямую</p>
+            </div>
+
+            <div class="consultation-services" id="consultationServices">
+                <!-- Услуги загружаются динамически -->
+            </div>
+
+            <div class="consultation-divider">
+                <span>или</span>
+            </div>
+
+            <a href="tel:+79832139059" class="consultation-call-btn">
+                <i class="fas fa-phone"></i>
+                <span>Позвонить мастеру</span>
+                <small>+7 (983) 213-90-59</small>
+            </a>
+
+            <div class="consultation-form" id="consultationForm" style="display: none;">
+                <h4>Запрос на консультацию</h4>
+                <p class="selected-service-text">Выбрано: <strong id="selectedServiceName"></strong></p>
+                <div class="form-group">
+                    <input type="tel" id="consultationPhone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="submitConsultation()">
+                    <i class="fas fa-paper-plane"></i> Отправить заявку
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- ========== SERVICE INFO MODAL ========== -->
+    <div class="modal" id="serviceInfoModal">
+        <div class="modal-content service-info-modal-content">
+            <button class="modal-close" onclick="closeServiceInfoModal()">&times;</button>
+            <div id="serviceInfoContent">
+                <!-- Контент загружается динамически -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FULLSCREEN BOOKING MODAL ========== -->
+    <div class="booking-modal" id="bookingModal">
+        <div class="booking-modal-content">
+            <div class="booking-modal-header">
+                <div class="booking-modal-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Онлайн-запись</span>
+                </div>
+                <button class="booking-modal-close" onclick="closeBookingModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="booking-modal-body">
+                <div id="bookingWidget" class="booking-widget-container"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main JavaScript -->
     <script src="/static/js/script.js"></script>

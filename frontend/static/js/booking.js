@@ -40,25 +40,49 @@ class BookingWidget {
         this.setupEventListeners();
     }
 
+    // Справочник описаний услуг
+    getServiceDescriptions() {
+        return {
+            'Атравматическая чистка лица': 'Деликатная процедура глубокого очищения без механического воздействия. Использует энзимные и кислотные пилинги. Идеально для чувствительной, куперозной кожи и при акне.',
+            'Лифтинг-омоложение лица': 'Интенсивная антивозрастная процедура с пептидными комплексами. Стимулирует выработку коллагена и эластина, подтягивает овал лица, разглаживает морщины.',
+            'Липосомальное обновление кожи': 'Инновационная доставка активных веществ в глубокие слои кожи с помощью липосом. Интенсивное увлажнение, питание и регенерация клеток.',
+            'Ферментотерапия лица': 'Мягкий энзимный пилинг на основе натуральных ферментов папайи и ананаса. Деликатно растворяет ороговевшие клетки, очищает поры, выравнивает тон кожи.',
+            'Безынъекционный ботокс лица': 'Процедура с аргирелином и пептидным комплексом. Расслабляет мимические мышцы, разглаживает морщины лба и межбровья. Безопасная альтернатива инъекциям.',
+            'Атравматическая чистка спины': 'Профессиональное очищение кожи спины от высыпаний и воспалений. Включает распаривание, энзимный пилинг, бережную экстракцию, успокаивающую маску.',
+            'Лифтинг шеи и декольте': 'Специальный уход за деликатной зоной шеи и декольте. Устраняет дряблость, пигментацию, мелкие морщины. Коллагеновые маски и моделирующий массаж.',
+            'Обновление лица и декольте': 'Комплексная anti-age программа для лица и зоны декольте. Пилинг, сыворотки с гиалуроновой кислотой, коллагеновая маска и массаж.',
+            'Ботокс лица и шеи': 'Расширенная безынъекционная процедура ботокс-эффекта для лица и шеи. Пептидные комплексы расслабляют мимику, лифтинг-маска подтягивает контуры.'
+        };
+    }
+
     async loadServices() {
+        const descriptions = this.getServiceDescriptions();
+
         try {
             const response = await fetch('/api/services');
             if (response.ok) {
                 this.services = await response.json();
+                // Дополняем услуги описаниями, если они отсутствуют
+                this.services = this.services.map(service => {
+                    if (!service.description) {
+                        service.description = descriptions[service.name] || 'Профессиональная косметологическая процедура для красоты и здоровья вашей кожи.';
+                    }
+                    return service;
+                });
             }
         } catch (error) {
             console.error('Error loading services:', error);
             // Fallback услуги если API недоступен
             this.services = [
-                { id: 1, name: 'Атравматическая чистка лица', price: 2500, duration_minutes: 60, category: 'Лицо', description: 'Бережное очищение кожи без травмирования. Подходит для чувствительной кожи.' },
-                { id: 2, name: 'Лифтинг-омоложение лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Подтяжка и омоложение кожи с использованием профессиональных препаратов.' },
-                { id: 3, name: 'Липосомальное обновление кожи', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Глубокое обновление кожи с помощью липосомальных технологий.' },
-                { id: 4, name: 'Ферментотерапия лица', price: 2800, duration_minutes: 75, category: 'Лицо', description: 'Очищение и восстановление кожи с помощью натуральных ферментов.' },
-                { id: 5, name: 'Безынъекционный ботокс лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: 'Разглаживание морщин без инъекций с помощью специальных пептидов.' },
-                { id: 6, name: 'Атравматическая чистка спины', price: 4500, duration_minutes: 90, category: 'Комплекс', description: 'Профессиональная чистка кожи спины без травмирования.' },
-                { id: 7, name: 'Лифтинг шеи и декольте', price: 3500, duration_minutes: 75, category: 'Комплекс', description: 'Подтяжка и омоложение зоны шеи и декольте.' },
-                { id: 8, name: 'Обновление лица и декольте', price: 3500, duration_minutes: 120, category: 'Комплекс', description: 'Комплексное обновление кожи лица и зоны декольте.' },
-                { id: 9, name: 'Ботокс лица и шеи', price: 3800, duration_minutes: 105, category: 'Комплекс', description: 'Безынъекционный ботокс-эффект для лица и шеи.' },
+                { id: 1, name: 'Атравматическая чистка лица', price: 2500, duration_minutes: 60, category: 'Лицо', description: descriptions['Атравматическая чистка лица'] },
+                { id: 2, name: 'Лифтинг-омоложение лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: descriptions['Лифтинг-омоложение лица'] },
+                { id: 3, name: 'Липосомальное обновление кожи', price: 2800, duration_minutes: 90, category: 'Лицо', description: descriptions['Липосомальное обновление кожи'] },
+                { id: 4, name: 'Ферментотерапия лица', price: 2800, duration_minutes: 75, category: 'Лицо', description: descriptions['Ферментотерапия лица'] },
+                { id: 5, name: 'Безынъекционный ботокс лица', price: 2800, duration_minutes: 90, category: 'Лицо', description: descriptions['Безынъекционный ботокс лица'] },
+                { id: 6, name: 'Атравматическая чистка спины', price: 4500, duration_minutes: 90, category: 'Комплекс', description: descriptions['Атравматическая чистка спины'] },
+                { id: 7, name: 'Лифтинг шеи и декольте', price: 3500, duration_minutes: 75, category: 'Комплекс', description: descriptions['Лифтинг шеи и декольте'] },
+                { id: 8, name: 'Обновление лица и декольте', price: 3500, duration_minutes: 120, category: 'Комплекс', description: descriptions['Обновление лица и декольте'] },
+                { id: 9, name: 'Ботокс лица и шеи', price: 3800, duration_minutes: 105, category: 'Комплекс', description: descriptions['Ботокс лица и шеи'] },
             ];
         }
     }
@@ -206,40 +230,28 @@ class BookingWidget {
         let html = '';
         for (const [category, services] of Object.entries(categories)) {
             const catIcon = category === 'Лицо' ? 'fa-face-smile' : 'fa-spa';
-            html += `<div class="service-category-widget">
-                <h4><i class="fas ${catIcon}"></i> ${category}</h4>
+            // Категории свёрнуты по умолчанию
+            html += `<div class="service-category-widget collapsed">
+                <div class="category-header" data-category="${category}">
+                    <h4><i class="fas ${catIcon}"></i> ${category}</h4>
+                    <span class="category-count">${services.length} услуг</span>
+                    <i class="fas fa-chevron-down category-toggle"></i>
+                </div>
                 <div class="services-options">`;
 
             services.forEach(service => {
                 const icon = getIcon(service.name);
-                const description = service.description || '';
                 html += `
                     <div class="service-option" data-service-id="${service.id}">
-                        <div class="service-option-header">
-                            <div class="service-option-icon">
-                                <i class="fas ${icon}"></i>
-                            </div>
-                            <div class="service-option-check">
-                                <i class="fas fa-check"></i>
-                            </div>
+                        <div class="service-option-icon">
+                            <i class="fas ${icon}"></i>
                         </div>
                         <div class="service-option-info">
-                            <span class="service-name" data-has-description="${description ? 'true' : 'false'}">
-                                ${service.name}
-                                ${description ? '<i class="fas fa-info-circle service-info-icon"></i>' : ''}
-                            </span>
-                            <div class="service-description" style="display: none;">
-                                ${description}
-                            </div>
-                            <span class="service-details">
-                                <i class="fas fa-magic"></i> FlaxTap
-                            </span>
+                            <span class="service-name">${service.name}</span>
+                            <span class="service-price">${service.price.toLocaleString()} ₽ <span>• ${service.duration_minutes} мин</span></span>
                         </div>
-                        <div class="service-option-footer">
-                            <span class="service-price">${service.price.toLocaleString()} <span>₽</span></span>
-                            <span class="service-option-duration">
-                                <i class="far fa-clock"></i> ${service.duration_minutes} мин
-                            </span>
+                        <div class="service-option-check">
+                            <i class="fas fa-check"></i>
                         </div>
                     </div>
                 `;
@@ -452,31 +464,18 @@ class BookingWidget {
     }
 
     setupEventListeners() {
-        // Service selection
+        // Category toggle (accordion)
         document.addEventListener('click', (e) => {
-            // Toggle description on service name click
-            const serviceName = e.target.closest('.service-name');
-            if (serviceName) {
-                e.stopPropagation();
-                const descriptionEl = serviceName.parentElement.querySelector('.service-description');
-                if (descriptionEl && descriptionEl.textContent.trim()) {
-                    const isVisible = descriptionEl.style.display !== 'none';
-                    // Hide all other descriptions
-                    document.querySelectorAll('.service-description').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                    document.querySelectorAll('.service-name').forEach(el => {
-                        el.classList.remove('description-open');
-                    });
-                    // Toggle this one
-                    if (!isVisible) {
-                        descriptionEl.style.display = 'block';
-                        serviceName.classList.add('description-open');
-                    }
+            const categoryHeader = e.target.closest('.category-header');
+            if (categoryHeader) {
+                const categoryWidget = categoryHeader.closest('.service-category-widget');
+                if (categoryWidget) {
+                    categoryWidget.classList.toggle('collapsed');
                 }
                 return;
             }
 
+            // Service selection
             const serviceOption = e.target.closest('.service-option');
             if (serviceOption) {
                 document.querySelectorAll('.service-option').forEach(el => el.classList.remove('selected'));
@@ -492,6 +491,8 @@ class BookingWidget {
                 document.querySelectorAll('.calendar-date').forEach(el => el.classList.remove('selected'));
                 dateCell.classList.add('selected');
                 this.selectedDate = dateCell.dataset.date;
+                this.selectedTime = null; // Сбрасываем выбранное время при смене даты
+                this.loadTimeSlots(dateCell.dataset.date); // Загружаем слоты времени
                 this.updateNextButton();
             }
 
@@ -698,6 +699,14 @@ class BookingWidget {
     }
 
     showSuccess(result) {
+        // Отправляем цель в Яндекс.Метрику
+        if (typeof ym !== 'undefined') {
+            ym(window.YM_COUNTER_ID, 'reachGoal', 'booking_success', {
+                service: this.selectedService?.name,
+                price: this.selectedService?.price
+            });
+        }
+
         const dateObj = new Date(this.selectedDate);
         const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
                           'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
@@ -731,12 +740,12 @@ class BookingWidget {
                 </div>
 
                 <div class="success-actions">
-                    <a href="/my-bookings.html" class="btn btn-outline">
+                    <button class="btn btn-outline" onclick="closeBookingModal()">
+                        <i class="fas fa-times"></i> Закрыть
+                    </button>
+                    <a href="/my-bookings.html" class="btn btn-primary">
                         <i class="fas fa-list"></i> Мои записи
                     </a>
-                    <button class="btn btn-primary" onclick="location.reload()">
-                        <i class="fas fa-plus"></i> Новая запись
-                    </button>
                 </div>
 
                 <p class="success-note">
@@ -752,6 +761,6 @@ class BookingWidget {
 document.addEventListener('DOMContentLoaded', () => {
     // Only initialize if widget container exists
     if (document.getElementById('bookingWidget')) {
-        new BookingWidget();
+        window.bookingWidgetInstance = new BookingWidget();
     }
 });
