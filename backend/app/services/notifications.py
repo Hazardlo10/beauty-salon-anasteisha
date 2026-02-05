@@ -663,3 +663,129 @@ async def notify_client_booking_cancelled(
             "Запись отменена - сообщите клиенту!"
         )
         await ClientNotificationService.send_telegram_to_specialist(msg)
+
+
+async def notify_client_booking_rescheduled(
+    client_email: Optional[str],
+    client_telegram_id: Optional[int],
+    client_name: str,
+    client_phone: str,
+    service_name: str,
+    old_date,
+    old_time: str,
+    new_date,
+    new_time: str,
+    appointment_id: int
+):
+    """Уведомить клиента о переносе записи"""
+    sent = False
+    tasks = []
+
+    old_date_str = ClientNotificationService._format_date(old_date)
+    new_date_str = ClientNotificationService._format_date(new_date)
+
+    if client_email:
+        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>body{{font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:#333}}.container{{max-width:600px;margin:0 auto;padding:20px}}.header{{background:linear-gradient(135deg,#17a2b8,#138496);color:white;padding:30px;text-align:center;border-radius:10px 10px 0 0}}.content{{background:#f9f9f9;padding:30px;border-radius:0 0 10px 10px}}.info-box{{background:white;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #17a2b8}}.old{{text-decoration:line-through;color:#888}}.new{{color:#28a745;font-weight:bold}}.footer{{text-align:center;padding:20px;color:#888;font-size:12px}}</style></head>
+<body><div class="container"><div class="header"><h1>🔄 Запись перенесена</h1></div>
+<div class="content"><h2>Здравствуйте, {client_name}!</h2><p>Ваша запись была перенесена на новое время.</p>
+<div class="info-box"><p><strong>Услуга:</strong> {service_name}</p><p class="old">Было: {old_date_str} в {old_time}</p><p class="new">Новое время: {new_date_str} в {new_time}</p></div>
+<p><strong>Адрес:</strong> г. Анжеро-Судженск, ул. М.Горького 11А</p></div>
+<div class="footer"><p>Anasteisha</p></div></div></body></html>"""
+        text = f"Здравствуйте, {client_name}!\n\n🔄 Запись перенесена\n\nУслуга: {service_name}\nБыло: {old_date_str} в {old_time}\nНовое время: {new_date_str} в {new_time}\n\nАдрес: г. Анжеро-Судженск, ул. М.Горького 11А\n\nAnasteisha"
+        tasks.append(ClientNotificationService.send_email(client_email, "🔄 Запись перенесена - Anasteisha", html, text))
+        sent = True
+
+    if client_telegram_id:
+        msg = f"""🔄 <b>Запись перенесена</b>
+
+{client_name}, ваша запись перенесена на новое время.
+
+💆 {service_name}
+❌ <s>Было: {old_date_str} в {old_time}</s>
+✅ <b>Новое время: {new_date_str} в {new_time}</b>
+
+📍 г. Анжеро-Судженск, ул. М.Горького 11А"""
+        tasks.append(ClientNotificationService.send_telegram_to_client(client_telegram_id, msg))
+        sent = True
+
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    if not sent:
+        msg = f"""📞 <b>ПОЗВОНИТЕ КЛИЕНТУ!</b>
+
+Запись перенесена - сообщите клиенту!
+
+👤 <b>Клиент:</b> {client_name}
+📞 <b>Телефон:</b> {client_phone}
+
+💆 {service_name}
+❌ Было: {old_date_str} в {old_time}
+✅ Новое время: {new_date_str} в {new_time}
+
+<i>У клиента нет email/Telegram</i>"""
+        await ClientNotificationService.send_telegram_to_specialist(msg)
+
+
+async def notify_client_reminder(
+    client_email: Optional[str],
+    client_telegram_id: Optional[int],
+    client_name: str,
+    client_phone: str,
+    service_name: str,
+    appointment_date,
+    appointment_time: str,
+    appointment_id: int
+):
+    """Напоминание клиенту о записи (за день до визита)"""
+    sent = False
+    tasks = []
+
+    date_str = ClientNotificationService._format_date(appointment_date)
+
+    if client_email:
+        html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>body{{font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:#333}}.container{{max-width:600px;margin:0 auto;padding:20px}}.header{{background:linear-gradient(135deg,#c9a86c,#b8956a);color:white;padding:30px;text-align:center;border-radius:10px 10px 0 0}}.content{{background:#f9f9f9;padding:30px;border-radius:0 0 10px 10px}}.info-box{{background:white;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #c9a86c}}.footer{{text-align:center;padding:20px;color:#888;font-size:12px}}</style></head>
+<body><div class="container"><div class="header"><h1>⏰ Напоминание о записи</h1></div>
+<div class="content"><h2>Здравствуйте, {client_name}!</h2><p>Напоминаем о вашей записи <b>завтра</b>!</p>
+<div class="info-box"><p><strong>Услуга:</strong> {service_name}</p><p><strong>Дата:</strong> {date_str}</p><p><strong>Время:</strong> {appointment_time}</p></div>
+<p><strong>Адрес:</strong> г. Анжеро-Судженск, ул. М.Горького 11А</p><p>Ждём вас!</p></div>
+<div class="footer"><p>Anasteisha</p></div></div></body></html>"""
+        text = f"Здравствуйте, {client_name}!\n\n⏰ Напоминание о записи завтра!\n\nУслуга: {service_name}\nДата: {date_str}\nВремя: {appointment_time}\n\nАдрес: г. Анжеро-Судженск, ул. М.Горького 11А\n\nЖдём вас!\nAnasteisha"
+        tasks.append(ClientNotificationService.send_email(client_email, "⏰ Напоминание о записи завтра - Anasteisha", html, text))
+        sent = True
+
+    if client_telegram_id:
+        msg = f"""⏰ <b>Напоминание о записи!</b>
+
+{client_name}, завтра у вас запись!
+
+💆 {service_name}
+📆 {date_str}
+🕐 {appointment_time}
+
+📍 г. Анжеро-Судженск, ул. М.Горького 11А
+
+Ждём вас! 💖"""
+        tasks.append(ClientNotificationService.send_telegram_to_client(client_telegram_id, msg))
+        sent = True
+
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    # Если нет контактов - напоминаем специалисту позвонить
+    if not sent:
+        msg = f"""📞 <b>НАПОМНИТЕ КЛИЕНТУ!</b>
+
+Запись завтра - позвоните для напоминания!
+
+👤 <b>Клиент:</b> {client_name}
+📞 <b>Телефон:</b> {client_phone}
+
+💆 {service_name}
+📆 {date_str}
+🕐 {appointment_time}
+
+<i>У клиента нет email/Telegram</i>"""
+        await ClientNotificationService.send_telegram_to_specialist(msg)

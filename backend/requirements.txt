@@ -1,0 +1,25 @@
+# Beauty Salon Backend Dependencies
+
+# Web Framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# Database
+sqlalchemy>=2.0.0
+
+# Validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# HTTP Client
+httpx>=0.24.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# Admin Panel
+sqladmin>=0.15.0
+itsdangerous>=2.1.0
+
+# Telegram Bot (optional)
+python-telegram-bot>=20.0

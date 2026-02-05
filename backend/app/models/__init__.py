@@ -10,6 +10,7 @@ from .review import Review
 from .problem_report import ProblemReport
 from .work_schedule import WorkSchedule
 from .blocked_slot import BlockedSlot
+from .master_availability import MasterAvailability
 
 __all__ = [
     "Client",
@@ -20,5 +21,6 @@ __all__ = [
     "Review",
     "ProblemReport",
     "WorkSchedule",
-    "BlockedSlot"
+    "BlockedSlot",
+    "MasterAvailability"
 ]

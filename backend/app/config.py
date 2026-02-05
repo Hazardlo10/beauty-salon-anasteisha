@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@example.com"
     ADMIN_PHONE: str = "+79000000000"
 
+    # Admin Panel
+    ADMIN_PASSWORD: str = "beauty2024"
+
     # Booking Settings
     SLOT_DURATION_MINUTES: int = 30
     BOOKING_DAYS_AHEAD: int = 30
@@ -57,6 +60,10 @@ class Settings(BaseSettings):
     # Development
     DEBUG: bool = True
     ENVIRONMENT: str = "development"
+
+    # Preview Mode (ограничение доступа по ключу)
+    PREVIEW_MODE: bool = False  # True = сайт доступен только по ссылке с ключом
+    PREVIEW_KEY: str = "anasteisha2024"  # Ключ для доступа: ?preview=anasteisha2024
 
     class Config:
         # Путь к .env относительно корня проекта

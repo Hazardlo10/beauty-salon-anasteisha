@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from ..models.work_schedule import WorkSchedule, DEFAULT_SCHEDULE
 from ..models.blocked_slot import BlockedSlot
 from ..models.appointment import Appointment
+from ..models.master_availability import MasterAvailability, DEFAULT_MASTER_AVAILABILITY
 from ..config import get_settings
 
 settings = get_settings()
@@ -49,6 +50,62 @@ class ScheduleService:
                 }
 
         return None
+
+    def get_master_availability(self, target_date: date) -> Optional[dict]:
+        """
+        Получить доступность мастера на конкретную дату
+        Возвращает dict с start_time, end_time, is_available или None
+        """
+        day_of_week = target_date.weekday()
+
+        availability = self.db.query(MasterAvailability).filter(
+            MasterAvailability.day_of_week == day_of_week
+        ).first()
+
+        if availability:
+            return {
+                "start_time": availability.start_time,
+                "end_time": availability.end_time,
+                "is_available": availability.is_available
+            }
+
+        # Если расписание мастера не найдено - используем дефолтное
+        for default in DEFAULT_MASTER_AVAILABILITY:
+            if default["day_of_week"] == day_of_week:
+                return {
+                    "start_time": datetime.strptime(default["start_time"], "%H:%M").time(),
+                    "end_time": datetime.strptime(default["end_time"], "%H:%M").time(),
+                    "is_available": default["is_available"]
+                }
+
+        return None
+
+    def get_effective_working_hours(self, target_date: date) -> Optional[dict]:
+        """
+        Получить эффективные рабочие часы - пересечение расписания салона
+        и доступности мастера
+        """
+        salon_hours = self.get_working_hours(target_date)
+        if not salon_hours or not salon_hours["is_working_day"]:
+            return None
+
+        master_hours = self.get_master_availability(target_date)
+        if not master_hours or not master_hours["is_available"]:
+            return None
+
+        # Пересечение интервалов: берём максимум из начал и минимум из концов
+        effective_start = max(salon_hours["start_time"], master_hours["start_time"])
+        effective_end = min(salon_hours["end_time"], master_hours["end_time"])
+
+        # Проверяем, что интервал валидный
+        if effective_start >= effective_end:
+            return None
+
+        return {
+            "start_time": effective_start,
+            "end_time": effective_end,
+            "is_working_day": True
+        }
 
     def generate_time_slots(self, start: time, end: time, duration_minutes: int = None) -> List[time]:
         """
@@ -114,8 +171,8 @@ class ScheduleService:
         if service_duration is None:
             service_duration = self.slot_duration
 
-        # Проверяем рабочие часы
-        working = self.get_working_hours(target_date)
+        # Проверяем эффективные рабочие часы (пересечение салона и мастера)
+        working = self.get_effective_working_hours(target_date)
         if not working or not working["is_working_day"]:
             return False
 
@@ -166,8 +223,8 @@ class ScheduleService:
         if service_duration is None:
             service_duration = self.slot_duration
 
-        # Получаем рабочие часы
-        working = self.get_working_hours(target_date)
+        # Получаем эффективные рабочие часы (пересечение салона и мастера)
+        working = self.get_effective_working_hours(target_date)
         if not working or not working["is_working_day"]:
             return []
 
@@ -261,3 +318,115 @@ class ScheduleService:
             self.db.add(schedule)
 
         self.db.commit()
+
+    def init_master_availability(self):
+        """
+        Инициализировать расписание мастера по умолчанию
+        """
+        existing = self.db.query(MasterAvailability).count()
+        if existing > 0:
+            return  # Расписание мастера уже есть
+
+        for day_data in DEFAULT_MASTER_AVAILABILITY:
+            availability = MasterAvailability(
+                day_of_week=day_data["day_of_week"],
+                start_time=datetime.strptime(day_data["start_time"], "%H:%M").time(),
+                end_time=datetime.strptime(day_data["end_time"], "%H:%M").time(),
+                is_available=day_data["is_available"]
+            )
+            self.db.add(availability)
+
+        self.db.commit()
+
+    def set_master_availability(
+        self,
+        day_of_week: int,
+        start_time: time,
+        end_time: time,
+        is_available: bool = True
+    ) -> MasterAvailability:
+        """
+        Установить доступность мастера на конкретный день недели
+        """
+        availability = self.db.query(MasterAvailability).filter(
+            MasterAvailability.day_of_week == day_of_week
+        ).first()
+
+        if availability:
+            availability.start_time = start_time
+            availability.end_time = end_time
+            availability.is_available = is_available
+        else:
+            availability = MasterAvailability(
+                day_of_week=day_of_week,
+                start_time=start_time,
+                end_time=end_time,
+                is_available=is_available
+            )
+            self.db.add(availability)
+
+        self.db.commit()
+        self.db.refresh(availability)
+        return availability
+
+    def toggle_master_day(self, day_of_week: int, is_available: bool) -> MasterAvailability:
+        """
+        Включить/выключить рабочий день мастера
+        """
+        availability = self.db.query(MasterAvailability).filter(
+            MasterAvailability.day_of_week == day_of_week
+        ).first()
+
+        if availability:
+            availability.is_available = is_available
+        else:
+            # Создаём с дефолтными часами
+            for default in DEFAULT_MASTER_AVAILABILITY:
+                if default["day_of_week"] == day_of_week:
+                    availability = MasterAvailability(
+                        day_of_week=day_of_week,
+                        start_time=datetime.strptime(default["start_time"], "%H:%M").time(),
+                        end_time=datetime.strptime(default["end_time"], "%H:%M").time(),
+                        is_available=is_available
+                    )
+                    self.db.add(availability)
+                    break
+
+        self.db.commit()
+        self.db.refresh(availability)
+        return availability
+
+    def get_master_week_schedule(self) -> List[dict]:
+        """
+        Получить полное недельное расписание мастера
+        """
+        days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        result = []
+
+        for day_num in range(7):
+            availability = self.db.query(MasterAvailability).filter(
+                MasterAvailability.day_of_week == day_num
+            ).first()
+
+            if availability:
+                result.append({
+                    "day_of_week": day_num,
+                    "day_name": days[day_num],
+                    "start_time": availability.start_time.strftime("%H:%M"),
+                    "end_time": availability.end_time.strftime("%H:%M"),
+                    "is_available": availability.is_available
+                })
+            else:
+                # Используем дефолтное
+                for default in DEFAULT_MASTER_AVAILABILITY:
+                    if default["day_of_week"] == day_num:
+                        result.append({
+                            "day_of_week": day_num,
+                            "day_name": days[day_num],
+                            "start_time": default["start_time"],
+                            "end_time": default["end_time"],
+                            "is_available": default["is_available"]
+                        })
+                        break
+
+        return result

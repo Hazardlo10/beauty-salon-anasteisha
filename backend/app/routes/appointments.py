@@ -16,7 +16,8 @@ from ..services.schedule import ScheduleService
 from ..services.notifications import (
     notify_client_booking_created,
     notify_client_booking_confirmed,
-    notify_client_booking_cancelled
+    notify_client_booking_cancelled,
+    notify_client_booking_rescheduled
 )
 from ..config import get_settings
 
@@ -531,12 +532,28 @@ async def update_appointment(
         appointment.status = "cancelled"
         db.commit()
         await send_appointment_notification(appointment, service, client, "cancelled")
+
+        # Уведомляем клиента об отмене
+        await notify_client_booking_cancelled(
+            client_email=client.email,
+            client_telegram_id=client.telegram_id,
+            client_name=client.name,
+            client_phone=client.phone,
+            service_name=service.name,
+            appointment_date=appointment.appointment_date,
+            appointment_time=appointment.appointment_time.strftime("%H:%M")
+        )
+
         return {"success": True, "message": "Запись отменена"}
 
     # Перенос
     if data.new_date or data.new_time:
-        new_date = appointment.appointment_date
-        new_time = appointment.appointment_time
+        # Сохраняем старые значения для уведомления
+        old_date = appointment.appointment_date
+        old_time = appointment.appointment_time
+
+        new_date = old_date
+        new_time = old_time
 
         if data.new_date:
             new_date = datetime.strptime(data.new_date, "%Y-%m-%d").date()
@@ -553,6 +570,21 @@ async def update_appointment(
         db.commit()
 
         await send_appointment_notification(appointment, service, client, "rescheduled")
+
+        # Уведомляем клиента о переносе
+        await notify_client_booking_rescheduled(
+            client_email=client.email,
+            client_telegram_id=client.telegram_id,
+            client_name=client.name,
+            client_phone=client.phone,
+            service_name=service.name,
+            old_date=old_date,
+            old_time=old_time.strftime("%H:%M"),
+            new_date=new_date,
+            new_time=new_time.strftime("%H:%M"),
+            appointment_id=appointment.id
+        )
+
         return {
             "success": True,
             "message": "Запись перенесена",
