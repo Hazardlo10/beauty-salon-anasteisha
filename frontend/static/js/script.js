@@ -235,8 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     alert('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.');
                 }
-
-                console.log('Booking sent:', result);
             })
             .catch(function(error) {
                 // Reset button
@@ -306,8 +304,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Animated counter for experience years
+    // Experience years - статическое значение без анимации
     const expNumber = document.querySelector('.exp-number');
+    if (expNumber) {
+        expNumber.textContent = '5+';
+    }
+
+    /* Старый код с анимацией при прокрутке (закомментирован):
     if (expNumber && !expNumber.dataset.animated) {
         const observerOptions = {
             threshold: 0.5
@@ -325,6 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         observer.observe(expNumber);
     }
+    */
 
     function animateCounter(element, start, end, duration) {
         const range = end - start;
@@ -402,8 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const style = document.createElement('style');
     style.textContent = '@keyframes ripple { to { transform: scale(4); opacity: 0; } }';
     document.head.appendChild(style);
-
-    console.log('Anasteisha Beauty Salon - Website Loaded Successfully');
 });
 
 // Close modal function (global)
@@ -880,8 +882,8 @@ async function loadReviews() {
 
         // Сортируем: отзывы с текстом первыми
         reviews = reviews.sort((a, b) => {
-            const aHasText = a.review_text && a.review_text.trim().length > 0;
-            const bHasText = b.review_text && b.review_text.trim().length > 0;
+            const aHasText = a.text && a.text.trim().length > 0;
+            const bHasText = b.text && b.text.trim().length > 0;
             if (aHasText && !bHasText) return -1;
             if (!aHasText && bHasText) return 1;
             return 0; // Сохраняем исходный порядок для одинаковых
@@ -903,7 +905,7 @@ async function loadReviews() {
                             ${generateStars(review.rating)}
                         </div>
                     </div>
-                    <p class="review-text">${escapeHtml(review.review_text)}</p>
+                    <p class="review-text">${escapeHtml(review.text || '')}</p>
                 </div>
             `).join('');
 
@@ -914,11 +916,66 @@ async function loadReviews() {
                 container.innerHTML = `<div class="reviews-grid">${dynamicHtml}</div>`;
             }
         }
-        // Если отзывов нет, статические останутся
+
+        // Скрываем отзывы после 6-го и добавляем кнопку "Показать все"
+        initReviewsToggle();
 
     } catch (error) {
         console.error('Error loading reviews:', error);
         // При ошибке статические отзывы останутся
+        initReviewsToggle();
+    }
+}
+
+function initReviewsToggle() {
+    const reviewsGrid = document.querySelector('.reviews-grid');
+    if (!reviewsGrid) return;
+
+    const allReviews = reviewsGrid.querySelectorAll('.review-card');
+    const visibleCount = 6;
+
+    if (allReviews.length <= visibleCount) return; // Не нужна кнопка
+
+    // Скрываем отзывы после 6-го
+    allReviews.forEach((review, index) => {
+        if (index >= visibleCount) {
+            review.classList.add('review-hidden');
+        }
+    });
+
+    // Добавляем кнопку "Показать все"
+    const container = document.getElementById('reviewsContainer');
+    const hiddenCount = allReviews.length - visibleCount;
+
+    const toggleBtn = document.createElement('div');
+    toggleBtn.className = 'reviews-toggle-container';
+    toggleBtn.innerHTML = `
+        <button class="btn btn-outline reviews-toggle-btn" onclick="toggleAllReviews()">
+            <i class="fas fa-chevron-down"></i> Показать ещё ${hiddenCount} отзывов
+        </button>
+    `;
+    container.appendChild(toggleBtn);
+}
+
+function toggleAllReviews() {
+    const reviewsGrid = document.querySelector('.reviews-grid');
+    const hiddenReviews = reviewsGrid.querySelectorAll('.review-hidden');
+    const toggleBtn = document.querySelector('.reviews-toggle-btn');
+
+    if (hiddenReviews.length > 0) {
+        // Показываем все
+        hiddenReviews.forEach(review => review.classList.remove('review-hidden'));
+        toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Скрыть';
+    } else {
+        // Скрываем обратно
+        const allReviews = reviewsGrid.querySelectorAll('.review-card');
+        allReviews.forEach((review, index) => {
+            if (index >= 6) {
+                review.classList.add('review-hidden');
+            }
+        });
+        const hiddenCount = allReviews.length - 6;
+        toggleBtn.innerHTML = `<i class="fas fa-chevron-down"></i> Показать ещё ${hiddenCount} отзывов`;
     }
 }
 
