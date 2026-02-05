@@ -192,8 +192,8 @@
                 </div>
 
                 <div class="hero-buttons" data-aos="fade-up" data-aos-delay="800">
-                    <button class="btn btn-primary btn-lg" onclick="openConsultationModal()">
-                        <i class="fas fa-calendar-check"></i> Записаться на консультацию
+                    <button class="btn btn-primary btn-lg" onclick="openBookingModal()">
+                        <i class="fas fa-paper-plane"></i> Оставить заявку
                     </button>
                     <a href="#services" class="btn btn-outline btn-lg">
                         <i class="fas fa-list"></i> Смотреть услуги
@@ -471,8 +471,8 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="openConsultationModal()">
-                        <i class="fas fa-calendar-check"></i> Записаться на консультацию
+                    <button class="btn btn-primary" onclick="openBookingModal()">
+                        <i class="fas fa-paper-plane"></i> Оставить заявку
                     </button>
                 </div>
             </div>
@@ -719,14 +719,14 @@
     <section class="booking booking-centered booking-section-placeholder" id="booking">
         <div class="container">
             <div class="booking-header" data-aos="fade-up">
-                <span class="section-badge">Онлайн-запись</span>
-                <h2>Запишитесь на процедуру</h2>
-                <p class="booking-subtitle">Выберите удобное время и дату. Мы подтвердим вашу запись в течение 15 минут.</p>
+                <span class="section-badge">Запись</span>
+                <h2>Оставьте заявку</h2>
+                <p class="booking-subtitle">Выберите услугу и оставьте контакты — мы свяжемся с вами в течение часа для подтверждения удобного времени.</p>
             </div>
 
             <div data-aos="fade-up" data-aos-delay="100" style="text-align: center; margin: 30px 0;">
                 <button class="btn-book-now open-booking-modal" onclick="openBookingModal()">
-                    <i class="fas fa-calendar-plus"></i> Записаться онлайн
+                    <i class="fas fa-paper-plane"></i> Оставить заявку
                 </button>
             </div>
 
@@ -734,26 +734,28 @@
             <div class="booking-benefits-bar" data-aos="fade-up" data-aos-delay="200">
                 <div class="benefit-item">
                     <i class="fas fa-clock"></i>
-                    <span>Быстрое подтверждение</span>
+                    <span>Свяжемся за час</span>
                 </div>
                 <div class="benefit-item">
                     <i class="fas fa-calendar-check"></i>
-                    <span>Гибкий выбор времени</span>
+                    <span>Гибкий график</span>
                 </div>
                 <div class="benefit-item">
-                    <i class="fas fa-bell"></i>
-                    <span>Напоминание о визите</span>
+                    <i class="fas fa-heart"></i>
+                    <span>Индивидуальный подход</span>
                 </div>
             </div>
 
-            <!-- Links -->
+            <!-- Contact Options -->
             <div class="booking-links-centered" data-aos="fade-up" data-aos-delay="300">
-                <a href="/my-bookings.html" class="booking-link-btn">
-                    <i class="fas fa-list"></i> Мои записи
-                </a>
-                <span class="booking-divider">или</span>
-                <a href="tel:+79832139059" class="booking-link-btn booking-link-secondary">
+                <a href="tel:+79832139059" class="booking-link-btn">
                     <i class="fas fa-phone"></i> Позвонить
+                </a>
+                <a href="https://t.me/anasteisha_beauty" target="_blank" class="booking-link-btn">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="https://vk.com/anasteisha_beauty" target="_blank" class="booking-link-btn">
+                    <i class="fab fa-vk"></i> ВКонтакте
                 </a>
             </div>
         </div>
@@ -1110,8 +1112,8 @@
         <div class="booking-modal-content">
             <div class="booking-modal-header">
                 <div class="booking-modal-title">
-                    <i class="fas fa-calendar-plus"></i>
-                    <span>Онлайн-запись</span>
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Заявка на запись</span>
                 </div>
                 <button class="booking-modal-close" onclick="closeBookingModal()">
                     <i class="fas fa-times"></i>
@@ -1125,7 +1127,10 @@
 
     <!-- Main JavaScript -->
     <script src="/static/js/script.js"></script>
-    <!-- Booking Widget -->
+    <!-- Booking Request Widget (упрощённая форма заявки) -->
+    <script src="/static/js/booking-request.js"></script>
+    <!-- Старый виджет с выбором времени (на будущее):
     <script src="/static/js/booking.js"></script>
+    -->
 </body>
 </html>
