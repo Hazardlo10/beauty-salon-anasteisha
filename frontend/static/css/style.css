@@ -84,7 +84,7 @@ section[id] {
 
 body {
     font-family: var(--font-body);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.8;
     color: var(--gray-dark);
@@ -2396,6 +2396,13 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     padding-top: 30px;
     border-top: 1px solid rgba(255,255,255,0.1);
 }
+
+.footer-actions .btn {
+    padding: 16px 40px;
+    font-size: 15px;
+    min-width: 200px;
+}
+
 .btn-sm {
     padding: 12px 24px;
     font-size: 13px;
@@ -5472,4 +5479,26 @@ body.booking-modal-open {
     .contact-buttons .btn {
         width: 100%;
     }
+}
+
+/* ========== REVIEWS TOGGLE ========== */
+.review-hidden {
+    display: none !important;
+}
+
+.reviews-toggle-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.reviews-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 15px;
+}
+
+.reviews-toggle-btn i {
+    transition: transform 0.3s ease;
 }
