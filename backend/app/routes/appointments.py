@@ -593,3 +593,91 @@ async def update_appointment(
         }
 
     return {"success": True, "message": "Запись обновлена"}
+
+
+# ==================== ЗАЯВКИ НА ЗАПИСЬ (упрощённая форма) ====================
+
+class BookingRequestCreate(BaseModel):
+    """Заявка на запись (без выбора конкретного времени)"""
+    service_id: Optional[int] = None
+    service_name: str
+    client_name: str
+    client_phone: str
+    time_preference: str = "any"  # morning, afternoon, evening, any
+    comment: Optional[str] = None
+
+
+@router.post("/booking-requests")
+async def create_booking_request(
+    request: BookingRequestCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Создать заявку на запись.
+    Мастер получит уведомление и сам свяжется с клиентом.
+    """
+    # Названия предпочтений времени
+    time_pref_labels = {
+        "morning": "Утро (9:00-12:00)",
+        "afternoon": "День (12:00-17:00)",
+        "evening": "Вечер (17:00-21:00)",
+        "any": "Любое время"
+    }
+
+    time_pref_text = time_pref_labels.get(request.time_preference, request.time_preference)
+
+    # Формируем сообщение для мастера
+    message = f"""📋 <b>НОВАЯ ЗАЯВКА С САЙТА!</b>
+
+👤 <b>Клиент:</b> {request.client_name}
+📱 <b>Телефон:</b> {request.client_phone}
+
+💆 <b>Услуга:</b> {request.service_name}
+🕐 <b>Предпочтительное время:</b> {time_pref_text}"""
+
+    if request.comment:
+        message += f"\n\n💬 <b>Комментарий:</b> {request.comment}"
+
+    message += "\n\n<i>Свяжитесь с клиентом для согласования времени!</i>"
+
+    # Отправляем уведомление мастеру
+    bot_token = settings.TELEGRAM_BOT_TOKEN
+    chat_id = settings.TELEGRAM_ADMIN_CHAT_ID
+
+    if bot_token and chat_id:
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    json={
+                        "chat_id": chat_id,
+                        "text": message,
+                        "parse_mode": "HTML"
+                    },
+                    timeout=10.0
+                )
+        except Exception as e:
+            print(f"Ошибка отправки уведомления: {e}")
+
+    # Также отправляем разработчику (если настроен)
+    dev_chat_id = settings.TELEGRAM_DEV_CHAT_ID
+    if bot_token and dev_chat_id and dev_chat_id != chat_id:
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    json={
+                        "chat_id": dev_chat_id,
+                        "text": message + f"\n\n_Время: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_",
+                        "parse_mode": "HTML"
+                    },
+                    timeout=10.0
+                )
+        except Exception:
+            pass
+
+    return {
+        "success": True,
+        "message": "Заявка отправлена",
+        "id": int(datetime.now().timestamp())
+    }
