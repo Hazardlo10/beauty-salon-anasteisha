@@ -3422,7 +3422,14 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 
 [data-theme="dark"] .service-card .service-info-btn {
-    background: rgba(184, 134, 11, 0.2);
+    background: rgba(30, 26, 18, 0.95);
+    border: 1px solid rgba(184, 134, 11, 0.4);
+    color: var(--gold);
+}
+[data-theme="dark"] .service-card .service-info-btn:hover {
+    background: var(--gold);
+    color: #1E1A12;
+    border-color: var(--gold);
 }
 
 /* Mobile */
