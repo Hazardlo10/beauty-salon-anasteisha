@@ -990,13 +990,14 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     background: radial-gradient(circle at 80% 50%, rgba(184, 134, 11, 0.04) 0%, transparent 50%);
     pointer-events: none;
 }
-.about-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; align-items: center; }
+.about-wrapper { display: grid; grid-template-columns: 1.2fr 1.2fr; gap: 80px; align-items: start; }
 .about-image { position: relative; }
 .about-image-frame { position: relative; }
 .about-photo {
     position: relative;
     z-index: 1;
     width: 100%;
+    max-width: 450px;
     aspect-ratio: 3/4;
     object-fit: cover;
     border-radius: var(--radius-lg);
