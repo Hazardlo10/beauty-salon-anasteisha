@@ -2667,6 +2667,13 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     color: #6B5D4A;
 }
 
+/* Section badges dark theme */
+[data-theme="dark"] .section-badge {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.3) 0%, rgba(184, 134, 11, 0.15) 100%);
+    color: var(--gold);
+    border-color: rgba(184, 134, 11, 0.4);
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .container { padding: 0 30px; }
