@@ -455,7 +455,7 @@ class BookingRequestWidget {
                         <a href="tel:+79832139059" class="btn btn-outline">
                             <i class="fas fa-phone"></i> Позвонить
                         </a>
-                        <a href="https://t.me/anasteisha_beauty" target="_blank" class="btn btn-outline">
+                        <a href="https://t.me/Nastenalaik" target="_blank" class="btn btn-outline">
                             <i class="fab fa-telegram"></i> Telegram
                         </a>
                     </div>
