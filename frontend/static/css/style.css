@@ -123,6 +123,13 @@ body {
 [data-theme="dark"] .theme-toggle .fa-sun { display: block; }
 [data-theme="dark"] .theme-toggle .fa-moon { display: none; }
 
+/* Dark theme toggle button styling */
+[data-theme="dark"] .theme-toggle {
+    background: #2A2015;
+    border-color: var(--gold);
+    color: #F5D742;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 500;
@@ -2628,6 +2635,36 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 [data-theme="dark"] .welcome-note {
     border-top-color: #3A2E1E;
+}
+
+/* Before/After Dark Theme */
+[data-theme="dark"] .before-after {
+    background: linear-gradient(180deg, #18140C 0%, #100C06 100%);
+}
+[data-theme="dark"] .before-after .section-title {
+    background: linear-gradient(135deg, #F5F0E5 0%, #E8E0D0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+[data-theme="dark"] .before-after .section-description {
+    color: #9A8D7A;
+}
+[data-theme="dark"] .before-after-card {
+    background: #1E1A12;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] .before-after-card:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .ba-info h3 {
+    color: #F5F0E5;
+}
+[data-theme="dark"] .ba-info p {
+    color: #9A8D7A;
+}
+[data-theme="dark"] .ba-note {
+    color: #6B5D4A;
 }
 
 /* RESPONSIVE */
