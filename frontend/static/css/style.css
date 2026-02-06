@@ -7,9 +7,9 @@
 /* ==================== CSS VARIABLES ==================== */
 /* Глубокая золотистая палитра */
 :root {
-    --white: #FFFDF8;
-    --cream: #FAF6EE;
-    --cream-dark: #F0E8D8;
+    --white: #FAFAFA;
+    --cream: #F5F2EE;
+    --cream-dark: #EBE7E2;
     --gold: #B8860B;
     --gold-light: #E8D5A8;
     --gold-dark: #8B6508;
