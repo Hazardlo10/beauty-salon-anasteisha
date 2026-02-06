@@ -1030,21 +1030,18 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     left: 0;
     background: var(--gold-gradient);
     color: var(--white);
-    padding: 30px 45px;
+    padding: 20px 35px;
     text-align: center;
     z-index: 2;
     border-radius: 0 var(--radius-lg) 0 0;
     box-shadow: var(--shadow-gold);
 }
-.exp-number {
-    display: block;
-    font-family: var(--font-heading);
-    font-size: 48px;
+.exp-text {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
     font-weight: 600;
-    line-height: 1;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
-.exp-text { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.9; }
 .about-content { padding-left: 30px; position: relative; z-index: 1; }
 .about-title {
     font-size: 48px;
