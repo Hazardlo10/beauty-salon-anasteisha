@@ -1127,6 +1127,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 .gallery-placeholder-content h3 { font-size: 26px; margin-bottom: 12px; letter-spacing: 1px; }
 .gallery-placeholder-content p { color: var(--gray); font-size: 15px; }
+.gallery-note { text-align: center; font-size: 14px; color: var(--gray); font-style: italic; margin-top: 30px; }
 
 /* ==================== CERTIFICATES SECTION ==================== */
 .certificates {
