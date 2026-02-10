@@ -2661,9 +2661,9 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 
 /* Section badges dark theme */
 [data-theme="dark"] .section-badge {
-    background: linear-gradient(135deg, rgba(184, 134, 11, 0.3) 0%, rgba(184, 134, 11, 0.15) 100%);
-    color: var(--gold);
-    border-color: rgba(184, 134, 11, 0.4);
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.25) 0%, rgba(184, 134, 11, 0.1) 100%);
+    color: #F5D742;
+    border-color: rgba(184, 134, 11, 0.5);
 }
 
 /* Hero badge dark theme */
