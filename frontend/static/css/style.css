@@ -2666,6 +2666,13 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     border-color: rgba(184, 134, 11, 0.4);
 }
 
+/* Hero badge dark theme */
+[data-theme="dark"] .hero-badge {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.25) 0%, rgba(184, 134, 11, 0.1) 100%);
+    border-color: rgba(184, 134, 11, 0.5);
+    color: #F5D742;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .container { padding: 0 30px; }
