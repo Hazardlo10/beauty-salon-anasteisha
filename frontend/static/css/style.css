@@ -1742,8 +1742,14 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 
     .booking-benefits-bar {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
         align-items: center;
+    }
+
+    .benefit-item {
+        width: 100%;
+        max-width: 250px;
+        justify-content: flex-start;
     }
 
     .booking-links-centered {
