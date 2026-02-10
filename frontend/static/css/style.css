@@ -2694,7 +2694,8 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     .header-btn { display: none; }
     .theme-toggle { width: 40px; height: 40px; font-size: 16px; margin-left: 10px; }
     .hero { padding: 140px 20px 100px; }
-    .hero-features { flex-direction: column; gap: 30px; }
+    .hero-features { flex-direction: column; gap: 15px; align-items: center; }
+    .hero-feature { width: 100%; max-width: 300px; }
     .hero-buttons { flex-direction: column; width: 100%; }
     .hero-buttons .btn { width: 100%; justify-content: center; }
     .services-grid { grid-template-columns: 1fr; }
