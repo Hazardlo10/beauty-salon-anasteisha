@@ -2693,8 +2693,10 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     .mobile-menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
     .header-btn { display: none; }
     .theme-toggle { width: 40px; height: 40px; font-size: 16px; margin-left: 10px; }
+    .hero { padding: 140px 20px 100px; }
     .hero-features { flex-direction: column; gap: 30px; }
-    .hero-buttons { flex-direction: column; }
+    .hero-buttons { flex-direction: column; width: 100%; }
+    .hero-buttons .btn { width: 100%; justify-content: center; }
     .services-grid { grid-template-columns: 1fr; }
     .promo-content { flex-direction: column; text-align: center; }
     .footer-main { grid-template-columns: 1fr; text-align: center; }
@@ -2703,7 +2705,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 @media (max-width: 480px) {
     .container { padding: 0 15px; }
-    .hero { padding: 120px 15px 80px; }
+    .hero { padding: 150px 15px 80px; }
     .section-title { font-size: 28px; }
     .service-card { padding: 25px 20px; }
     .modal-content { margin: 15px; padding: 30px 20px; }
