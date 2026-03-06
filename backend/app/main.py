@@ -657,6 +657,11 @@ async def my_bookings_page():
     return FileResponse(str(frontend_path.parent / "my-bookings.html"))
 
 
+@app.get("/privacy")
+async def privacy_page():
+    return FileResponse(str(frontend_path.parent / "privacy.html"))
+
+
 @app.post("/api/booking")
 async def create_booking(booking: BookingRequest):
     """Создание заявки на запись"""

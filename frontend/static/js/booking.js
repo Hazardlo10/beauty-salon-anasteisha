@@ -175,6 +175,12 @@ class BookingWidget {
                                     <span>Запомнить мои данные</span>
                                 </label>
                             </div>
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label consent-label">
+                                    <input type="checkbox" id="consentPersonalData" required>
+                                    <span>Я даю согласие на <a href="/privacy" target="_blank" class="consent-link">обработку персональных данных</a></span>
+                                </label>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -551,6 +557,14 @@ class BookingWidget {
                 this.updateNextButton();
             });
         }
+
+        // Consent checkbox - update button state
+        const consentCheckbox = document.getElementById('consentPersonalData');
+        if (consentCheckbox) {
+            consentCheckbox.addEventListener('change', () => {
+                this.updateNextButton();
+            });
+        }
     }
 
     goToStep(step) {
@@ -624,7 +638,8 @@ class BookingWidget {
             case 3:
                 const name = document.getElementById('bookingName')?.value;
                 const phone = document.getElementById('bookingPhone')?.value;
-                return name && phone;
+                const consent = document.getElementById('consentPersonalData')?.checked;
+                return name && phone && consent;
             default:
                 return true;
         }
@@ -641,7 +656,8 @@ class BookingWidget {
         if (submitBtn && this.currentStep === this.totalSteps) {
             const name = document.getElementById('bookingName')?.value;
             const phone = document.getElementById('bookingPhone')?.value;
-            submitBtn.disabled = !(name && phone);
+            const consent = document.getElementById('consentPersonalData')?.checked;
+            submitBtn.disabled = !(name && phone && consent);
         }
     }
 

@@ -4729,6 +4729,28 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
     cursor: pointer;
 }
 
+/* Чекбокс согласия на обработку персональных данных */
+.consent-label {
+    font-size: 13px;
+    line-height: 1.4;
+    align-items: flex-start;
+}
+
+.consent-label input[type="checkbox"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.consent-link {
+    color: var(--gold, #B8860B);
+    text-decoration: underline;
+    transition: opacity 0.3s;
+}
+
+.consent-link:hover {
+    opacity: 0.8;
+}
+
 /* Адаптивность для объединённого выбора даты/времени */
 @media (max-width: 768px) {
     .datetime-selector {

@@ -891,7 +891,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2024-2026 Anasteisha | Сайт: <a href="https://t.me/Koshkoder" target="_blank">@Koshkoder</a></p>
+                <p>&copy; 2024-2026 Anasteisha | <a href="/privacy" class="footer-privacy-link">Политика конфиденциальности</a> | Сайт: <a href="https://t.me/Koshkoder" target="_blank">@Koshkoder</a></p>
             </div>
         </div>
     </footer>
@@ -951,6 +951,12 @@
                 <div class="form-group">
                     <label for="reviewText">Ваш отзыв *</label>
                     <textarea id="reviewText" name="text" required placeholder="Расскажите о вашем опыте..."></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label consent-label">
+                        <input type="checkbox" id="reviewConsent" required>
+                        <span>Я даю согласие на <a href="/privacy" target="_blank" class="consent-link">обработку персональных данных</a></span>
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">
                     <i class="fas fa-paper-plane"></i> Отправить отзыв
@@ -1016,6 +1022,12 @@
                     <textarea id="problemDescription" name="description" required placeholder="Опишите проблему или ваше предложение..."></textarea>
                 </div>
                 <input type="hidden" id="problemPageUrl" name="page_url">
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label consent-label">
+                        <input type="checkbox" id="problemConsent" required>
+                        <span>Я даю согласие на <a href="/privacy" target="_blank" class="consent-link">обработку персональных данных</a></span>
+                    </label>
+                </div>
                 <button type="submit" class="btn btn-primary btn-submit">
                     <i class="fas fa-paper-plane"></i> Отправить
                 </button>
@@ -1041,6 +1053,12 @@
                 <div class="form-group">
                     <label for="supportMessage">Описание проблемы *</label>
                     <textarea id="supportMessage" name="message" required placeholder="Что случилось? Опишите проблему подробнее..."></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label consent-label">
+                        <input type="checkbox" id="supportConsent" required>
+                        <span>Я даю согласие на <a href="/privacy" target="_blank" class="consent-link">обработку персональных данных</a></span>
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">
                     <i class="fas fa-paper-plane"></i> Отправить
@@ -1083,6 +1101,12 @@
                 <p class="selected-service-text">Выбрано: <strong id="selectedServiceName"></strong></p>
                 <div class="form-group">
                     <input type="tel" id="consultationPhone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label consent-label">
+                        <input type="checkbox" id="consultationConsent" required>
+                        <span>Я даю согласие на <a href="/privacy" target="_blank" class="consent-link">обработку персональных данных</a></span>
+                    </label>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="submitConsultation()">
                     <i class="fas fa-paper-plane"></i> Отправить заявку

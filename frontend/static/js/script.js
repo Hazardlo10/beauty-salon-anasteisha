@@ -826,6 +826,12 @@ async function submitConsultation() {
         return;
     }
 
+    const consentCheckbox = document.getElementById('consultationConsent');
+    if (consentCheckbox && !consentCheckbox.checked) {
+        alert('Пожалуйста, дайте согласие на обработку персональных данных');
+        return;
+    }
+
     try {
         const response = await fetch('/api/consultation', {
             method: 'POST',
