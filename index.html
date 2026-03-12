@@ -116,6 +116,7 @@
                             <li><a href="#services">Услуги</a></li>
                             <li><a href="#about">О специалисте</a></li>
                             <li><a href="#gallery">Результаты</a></li>
+                            <li><a href="/courses">Курсы</a></li>
                             <li><a href="#booking">Запись</a></li>
                             <li><a href="#contacts">Контакты</a></li>
                         </ul>
@@ -554,15 +555,49 @@
                 </div>
             </div>
 
-            <div class="gallery-placeholder" data-aos="fade-up">
-                <div class="gallery-placeholder-content">
-                    <i class="fas fa-images"></i>
-                    <h3>Фотографии результатов</h3>
-                    <p>Здесь будут размещены фотографии до/после процедур</p>
+            <div class="gallery-grid" data-aos="fade-up">
+
+                <div class="gallery-item" onclick="openLightbox('/static/images/1.jpg')">
+                    <img src="/static/images/1.jpg" alt="Результат: липосомальное обновление кожи FlaxNewSkin" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <span class="gallery-item-label">До / После</span>
+                        <p>3 процедуры FlaxNewSkin</p>
+                    </div>
                 </div>
+
+                <div class="gallery-item" onclick="openLightbox('/static/images/2.jpg')">
+                    <img src="/static/images/2.jpg" alt="Результат: криопроцедура FlaxCryo" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <span class="gallery-item-label">До / После</span>
+                        <p>1 процедура FlaxCryo</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" onclick="openLightbox('/static/images/3.jpg')">
+                    <img src="/static/images/3.jpg" alt="Результат: сужение пор FlaxCryo" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <span class="gallery-item-label">До / После</span>
+                        <p>1 процедура FlaxCryo</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item" onclick="openLightbox('/static/images/4.jpg')">
+                    <img src="/static/images/4.jpg" alt="Результат: лифтинг FlaxNewSkin + FlaxSculpt" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <span class="gallery-item-label">До / После</span>
+                        <p>FlaxNewSkin + FlaxSculpt</p>
+                    </div>
+                </div>
+
             </div>
 
-            <p class="gallery-note" data-aos="fade-up">* Все фотографии публикуются с согласия клиентов</p>
+            <p class="gallery-note" data-aos="fade-up">* Все фотографии размещены с согласия клиентов</p>
+
+            <!-- Lightbox -->
+            <div class="gallery-lightbox" id="galleryLightbox" onclick="closeLightbox()">
+                <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+                <img id="lightboxImg" src="" alt="Результат процедуры">
+            </div>
         </div>
     </section>
 
@@ -1148,6 +1183,20 @@
 
     <!-- Main JavaScript -->
     <script src="/static/js/script.js"></script>
+    <script>
+        function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('galleryLightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            document.getElementById('galleryLightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
     <!-- Booking Request Widget (упрощённая форма заявки) -->
     <script src="/static/js/booking-request.js"></script>
     <!-- Старый виджет с выбором времени (на будущее):

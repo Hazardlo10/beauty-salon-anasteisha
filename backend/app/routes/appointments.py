@@ -681,3 +681,46 @@ async def create_booking_request(
         "message": "Заявка отправлена",
         "id": int(datetime.now().timestamp())
     }
+
+
+# ==================== ЗАЯВКИ НА КУРСЫ ====================
+
+class CourseOrderCreate(BaseModel):
+    name: str
+    contact: str  # Telegram или телефон
+    course: str
+    price: str
+
+
+@router.post("/course-order")
+async def create_course_order(order: CourseOrderCreate):
+    """Заявка на покупку гайда — уведомление мастеру в Telegram"""
+    now = datetime.now().strftime("%d.%m.%Y %H:%M")
+
+    message = f"""📚 <b>ЗАЯВКА НА ГАЙД!</b>
+
+👤 <b>Имя:</b> {order.name}
+📱 <b>Контакт:</b> {order.contact}
+
+📖 <b>Гайд:</b> {order.course}
+💰 <b>Стоимость:</b> {order.price} ₽
+
+🕐 {now}
+
+<i>Свяжитесь с клиентом, пришлите ссылку на оплату и PDF после получения!</i>"""
+
+    bot_token = settings.TELEGRAM_BOT_TOKEN
+    chat_id = settings.TELEGRAM_ADMIN_CHAT_ID
+
+    if bot_token and chat_id:
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
+                    timeout=10.0
+                )
+        except Exception as e:
+            print(f"[course-order] Ошибка отправки в Telegram: {e}")
+
+    return {"success": True}
