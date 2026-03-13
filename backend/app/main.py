@@ -672,6 +672,11 @@ async def rekvizity_page():
     return FileResponse(str(frontend_path.parent / "rekvizity.html"))
 
 
+@app.get("/oferta")
+async def oferta_page():
+    return FileResponse(str(frontend_path.parent / "oferta.html"))
+
+
 @app.post("/api/booking")
 async def create_booking(booking: BookingRequest):
     """Создание заявки на запись"""
