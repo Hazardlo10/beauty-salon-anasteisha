@@ -667,6 +667,11 @@ async def courses_page():
     return FileResponse(str(frontend_path.parent / "courses.html"))
 
 
+@app.get("/rekvizity")
+async def rekvizity_page():
+    return FileResponse(str(frontend_path.parent / "rekvizity.html"))
+
+
 @app.post("/api/booking")
 async def create_booking(booking: BookingRequest):
     """Создание заявки на запись"""
