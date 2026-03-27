@@ -664,7 +664,8 @@ async def privacy_page():
 
 @app.get("/courses")
 async def courses_page():
-    return FileResponse(str(frontend_path.parent / "courses.html"))
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/", status_code=301)
 
 
 @app.get("/rekvizity")
